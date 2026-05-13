@@ -2,11 +2,14 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.screen.*;
-import com.googlecode.lanterna.terminal.*;
 import com.googlecode.lanterna.terminal.swing.*;
 import com.googlecode.lanterna.input.*;
 
@@ -15,6 +18,20 @@ import javax.swing.*;
 
 public class Main {
     public static int uiSize = 7;
+    public static String scene;
+    //global variables so that they can be accessed without being passed as arguments to functions
+    public static SwingTerminalFrame terminal;
+    public static Screen screen;
+    public static TextGraphics tg;
+    public static TextFormatter formatter;
+
+    public static void showMainMenu() throws IOException {
+        scene = "Main Menu";
+        screen.clear();
+        formatter.printMulti(2, new FileReader("ascii-art/main-title.txt"), TextFormatter.PaddingAlignment.CENTER);
+        formatter.printSelectionMultiLine(15, Arrays.asList("Play", "Settings", "Exit"), TextFormatter.PaddingAlignment.CENTER);
+        screen.refresh();
+    }
 
     public static Screen createScreen(TerminalScreen terminal) throws IOException {
         terminal.startScreen();
@@ -22,36 +39,20 @@ public class Main {
         return terminal;
     }
 
+    public static void exit() throws IOException {
+        screen.stopScreen();
+        terminal.dispose();
+    }
 
-    public static void main(String[] args) throws IOException, InterruptedException {
-        SwingTerminalFrame terminal = getSwingTerminalFrame(); //create terminal
-        System.out.println(uiSize);
-        //creates terminal screen inside window with formatter object for easier multi line editing
-        Screen screen = createScreen(new TerminalScreen(terminal));
-        TextGraphics tg = screen.newTextGraphics();
-        TerminalSize size = screen.getTerminalSize();
-        TextFormatter formatter = new TextFormatter(tg, size.getColumns());
+    public static void showInitialization() throws IOException, InterruptedException {
+        scene = "Initialization";
 
-
-        formatter.printMulti(2, """
-                  ________________________________________________________________________ \s
-                //                                                                        \\\\
-                @@@      ,e,                                         ,e,                   \s
-                @@@       "    e@@~-@@@  @@@  @@@   e@@~-_   @@@-~\\   "    e@@~~\\   e@@~~@e\s
-                @@@      @@@  d@@@  @@@  @@@  @@@  d@@@   i  @@@     @@@  d@@@     d@@@  @@b
-                @@@      @@@  @@@@  @@@  @@@  @@@  @@@@   |  @@@     @@@  @@@@     @@@@__@@@
-                @@@      @@@  Y@@@  @@@  @@@  @@@  Y@@@   '  @@@     @@@  Y@@@     Y@@@    ,
-                @@@____  @@@   "@@_-@@@  "@@_-@@@   "@@_-~   @@@     @@@   "@@__/   "@@___/\s
-                                    @@@                                                    \s
-                \\\\__________________@@@___________________________________________________//
-                                    @@@                                                    \s
-                                    @@                                                     \s
-                                                                                  \s""", TextFormatter.PaddingAlignment.CENTER);
-        formatter.printSingle(25, "Press the up and down arrows to enlarge/shrink the UI", TextFormatter.PaddingAlignment.CENTER);
+        formatter.printMulti(2, new FileReader("ascii-art/main-title.txt"), TextFormatter.PaddingAlignment.CENTER);
+        formatter.printSingle(25, "Press the up and down arrows to enlarge/shrink the UI (Current size: " + uiSize + ")", TextFormatter.PaddingAlignment.CENTER);
         formatter.printSingle(26, "Press Enter to continue", TextFormatter.PaddingAlignment.CENTER);
         screen.refresh();
 
-        while (true) {
+        while (scene.equals("Initialization")) {
             KeyStroke key = screen.readInput();
             if (key.getKeyType() == KeyType.Escape) break;
             if (key.getKeyType() == KeyType.ArrowDown) {
@@ -66,11 +67,24 @@ public class Main {
                 uiSize--;
                 main(null);
             }
+
+            //continue
+            if (key.getKeyType() == KeyType.Enter) showMainMenu();
             screen.refresh();
         }
+    }
 
-        screen.stopScreen();
-        terminal.dispose();
+    public static void main(String[] args) throws IOException, InterruptedException {
+        //creates terminal screen inside window with formatter object for easier multi line editing
+        terminal = getSwingTerminalFrame();
+
+        //initializes global variables
+        screen = createScreen(new TerminalScreen(terminal));
+        tg = screen.newTextGraphics();
+        formatter = new TextFormatter(tg, screen.getTerminalSize().getColumns());
+
+        //title screen with UI resize
+        showInitialization();
     }
 
 

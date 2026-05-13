@@ -1,9 +1,13 @@
 import com.googlecode.lanterna.graphics.TextGraphics;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.screen.Screen;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
+import java.util.Scanner;
 import java.util.Timer;
 
 public class TextFormatter {
@@ -76,5 +80,40 @@ public class TextFormatter {
             System.out.println("Error reading file");
         }
     }
+
+    public void printOptionsInLine(int row, List<String> options, PaddingAlignment paddingAlignment, int padding) {
+        for (String option : options) {
+            int start = switch (paddingAlignment) {
+                case LEFT -> 0;
+                case CENTER -> ((cols /2) - (option.length() / 2));
+                case RIGHT -> cols - option.length();
+            };
+
+            for (int i = 0; i < padding; i++) {
+                option = " ".concat(option);
+                option = option.concat(" ");
+            }
+            tg.putString(start-(padding/2), row, option);
+        } //this is broken as fuck and I don't have the brain capacity to fix it, i'll do multi line instead
+    }
+
+    public void printSelectionMultiLine(int startRow, List<String> options, PaddingAlignment paddingAlignment) throws IOException {
+        int currentRow = startRow;
+        int selection = 0;
+        for (String option : options) {
+            int start = switch (paddingAlignment) {
+                case LEFT -> 0;
+                case CENTER -> ((cols /2) - (option.length() / 2));
+                case RIGHT -> cols - option.length();
+            };
+            tg.putString(start, currentRow, option);
+            currentRow++;
+        }
+        while (Main.scene.equals("Main Menu")) {
+            KeyStroke key = Main.screen.readInput();
+            System.out.println(key);
+        }
+    }
+
 
 }
