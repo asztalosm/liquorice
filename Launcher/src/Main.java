@@ -2,9 +2,7 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.graphics.TextGraphics;
@@ -26,11 +24,11 @@ public class Main {
     public static TextFormatter formatter;
 
     public static void showMainMenu() throws IOException {
-        scene = "Main Menu";
         screen.clear();
         formatter.printMulti(2, new FileReader("ascii-art/main-title.txt"), TextFormatter.PaddingAlignment.CENTER);
         formatter.printSelectionMultiLine(15, Arrays.asList("Play", "Settings", "Exit"), TextFormatter.PaddingAlignment.CENTER);
         screen.refresh();
+        scene = "Main Menu";
     }
 
     public static Screen createScreen(TerminalScreen terminal) throws IOException {
@@ -48,7 +46,7 @@ public class Main {
         scene = "Initialization";
 
         formatter.printMulti(2, new FileReader("ascii-art/main-title.txt"), TextFormatter.PaddingAlignment.CENTER);
-        formatter.printSingle(25, "Press the up and down arrows to enlarge/shrink the UI (Current size: " + uiSize + ")", TextFormatter.PaddingAlignment.CENTER);
+        formatter.printSingle(25, "Press the up and down arrows to enlarge/shrink the UI (Current size: " + uiSize + ") This text should be in the upper half of the terminal.", TextFormatter.PaddingAlignment.CENTER);
         formatter.printSingle(26, "Press Enter to continue", TextFormatter.PaddingAlignment.CENTER);
         screen.refresh();
 
@@ -60,7 +58,7 @@ public class Main {
                 terminal.dispose();
                 uiSize++;
                 main(null);
-            };
+            }
             if (key.getKeyType() == KeyType.ArrowUp) {
                 screen.stopScreen();
                 terminal.dispose();
