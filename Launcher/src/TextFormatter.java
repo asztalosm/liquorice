@@ -1,6 +1,8 @@
-
+import com.googlecode.lanterna.SGR;
+import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.screen.Screen;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -249,6 +251,90 @@ public record TextFormatter(TextGraphics tg, int cols) {
             tg.putString(getStartColumn(line, paddingAlignment), row, line);
         }
     }
+
+    public void askTextInputFileValidation(int row, PaddingAlignment paddingAlignment, String previousScene, String nextScene) throws IOException, InterruptedException {
+        //same as previous but it checks for pre-existing files
+        StringBuilder input = new StringBuilder();
+        tg.putString(getStartColumn("", paddingAlignment), row, "> ");
+        Main.screen.refresh();
+        boolean canCreate = false;
+        while (true) {
+            Main.screen.refresh();
+            // draw current input centered
+            KeyStroke key = Main.screen.readInput();
+            if (key == null) continue;
+            switch (key.getKeyType()) {
+                case Character -> {
+                    if (!key.getCharacter().equals(' ')) {
+                        input.append(key.getCharacter());
+                        if (SaveHandler.checkFileExists(input.toString().toLowerCase())) {
+                            tg.putString(0, row+1, " ".repeat(cols));
+                            String error = "ERROR: A save with this name already exists";
+                            tg.setForegroundColor(TextColor.ANSI.RED_BRIGHT);
+                            tg.putString(getStartColumn(error, PaddingAlignment.CENTER), row + 1, error);
+                            tg.setForegroundColor(TextColor.ANSI.DEFAULT);
+                            Main.screen.refresh();
+                        } else {
+                            tg.putString(0, row+1, " ".repeat(cols));
+                        }
+                        Main.screen.refresh();
+                    }
+                }
+                case Backspace -> {
+                    if (!input.isEmpty()) {
+                        input.deleteCharAt(input.length() - 1);
+                    }
+                    if (input.toString().isEmpty()) {
+                        tg.putString(0, row+1, " ".repeat(cols));
+                        String error = "ERROR: Save name cannot be empty";
+                        tg.setForegroundColor(TextColor.ANSI.RED_BRIGHT);
+                        tg.putString( getStartColumn(error, PaddingAlignment.CENTER),row+1, error);
+                        tg.setForegroundColor(TextColor.ANSI.DEFAULT);
+                    } else if (SaveHandler.checkFileExists(input.toString().toLowerCase())) {
+                        tg.putString(0, row+1, " ".repeat(cols));
+                        String error = "ERROR: A save with this name already exists";
+                        tg.setForegroundColor(TextColor.ANSI.RED_BRIGHT);
+                        tg.putString( getStartColumn(error, PaddingAlignment.CENTER), row+1, error);
+                        tg.setForegroundColor(TextColor.ANSI.DEFAULT);
+                    } else {
+                        tg.putString(0, row+1, " ".repeat(cols));
+                    }
+                    Main.screen.refresh();
+                }
+                case Enter -> {
+                    if (input.toString().isEmpty()) {
+                        String error = "ERROR: Save name cannot be empty";
+                        tg.setForegroundColor(TextColor.ANSI.RED_BRIGHT);
+                        tg.putString( getStartColumn(error, PaddingAlignment.CENTER),row+1, error, SGR.BOLD);
+                        tg.setForegroundColor(TextColor.ANSI.DEFAULT);
+                        Main.screen.refresh();
+                        continue;
+                    }
+                    if (SaveHandler.checkFileExists(input.toString().toLowerCase())) {
+                        String error = "ERROR: A save with this name already exists";
+                        tg.setForegroundColor(TextColor.ANSI.RED_BRIGHT);
+                        tg.putString( getStartColumn(error, PaddingAlignment.CENTER), row+1, error, SGR.BOLD);
+                        tg.setForegroundColor(TextColor.ANSI.DEFAULT);
+                        Main.screen.refresh();
+                        continue;
+                    } else {
+                        SaveHandler.createNewSave(input.toString());
+                        SceneController.loadScene(nextScene);
+                    }
+                    Main.screen.refresh();
+                    return;
+                }
+                case Escape -> SceneController.loadScene(previousScene); // null signals canceled input
+            }
+            String display = input.toString();
+            String line = "> " + display + "_";
+            String cleared = " ".repeat(line.length() + 1);
+            tg.putString(getStartColumn(cleared, paddingAlignment), row, cleared); // clear old text
+            tg.putString(getStartColumn(line, paddingAlignment), row, line);
+            Main.screen.refresh();
+        }
+    }
+
     //endregion
 }
 

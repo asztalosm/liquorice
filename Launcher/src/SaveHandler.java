@@ -3,7 +3,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class SaveHandler {
@@ -22,9 +21,7 @@ public class SaveHandler {
 
     public static void createNewSave(String characterName) throws IOException {
         createSavesFolder();
-        Date d1 = new Date();
-        String formatted = new SimpleDateFormat("yyyy-MM-dd_hh-mma").format(d1);
-        Files.createFile(Path.of(saveDirectory.toString() + "\\" + characterName + " " + formatted));
+        Files.createFile(Path.of(saveDirectory.toString() + "\\" + characterName));
 
     }
 
@@ -37,6 +34,14 @@ public class SaveHandler {
 
     public static void openExplorer() throws IOException {
         ProcessBuilder pb = new ProcessBuilder("explorer.exe", saveDirectory.toString());
-        Process process = pb.start();
+        pb.start();
+    }
+
+    public static boolean checkFileExists(String saveName) throws IOException {
+        File folder = new File(saveDirectory.toUri());
+        for (File file : Objects.requireNonNull(folder.listFiles())) {
+            if (file.getName().equals(saveName)) return true;
+        }
+        return false;
     }
 }

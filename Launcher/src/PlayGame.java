@@ -17,14 +17,14 @@ public class PlayGame {
         Main.screen.refresh();
         Main.formatter.printMulti(2, new FileReader("ascii-art/main-title.txt"), TextFormatter.PaddingAlignment.CENTER);
         Main.formatter.printSingle(16, "What should be the name of your save?", TextFormatter.PaddingAlignment.CENTER);
-        Main.formatter.askTextInput(17, TextFormatter.PaddingAlignment.CENTER, "Play Menu", "Play Menu");
+        Main.formatter.askTextInputFileValidation(17, TextFormatter.PaddingAlignment.CENTER, "Play Menu", "Play Menu");
     }
 
-    public static void loadSaves() throws IOException {
+    public static void loadSaves() throws IOException, InterruptedException {
         Main.scene = "Load Saves";
         Main.screen.clear();
         Main.screen.refresh();
         Main.formatter.printMulti(2, new FileReader("ascii-art/main-title.txt"), TextFormatter.PaddingAlignment.CENTER);
-        Main.formatter.printSingle(16, "Nem fejeztem még ezt be, de nagyjából kész van így a menü", TextFormatter.PaddingAlignment.CENTER);
+        Main.formatter.printSelectionMultiLine(16, List.of("Encounter Selection", "Character", "Exit"), List.of("Encounter Selection", "Character", "Save and Menu"), TextFormatter.PaddingAlignment.CENTER);
     }
 }
