@@ -2,11 +2,9 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
-import java.util.Arrays;
 
 import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.graphics.TextGraphics;
-import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.screen.*;
 import com.googlecode.lanterna.terminal.swing.*;
 import com.googlecode.lanterna.input.*;
@@ -23,13 +21,6 @@ public class Main {
     public static TextGraphics tg;
     public static TextFormatter formatter;
 
-    public static void showMainMenu() throws IOException {
-        screen.clear();
-        formatter.printMulti(2, new FileReader("ascii-art/main-title.txt"), TextFormatter.PaddingAlignment.CENTER);
-        formatter.printSelectionMultiLine(15, Arrays.asList("Play", "Settings", "Exit"), TextFormatter.PaddingAlignment.CENTER);
-        screen.refresh();
-        scene = "Main Menu";
-    }
 
     public static Screen createScreen(TerminalScreen terminal) throws IOException {
         terminal.startScreen();
@@ -40,37 +31,9 @@ public class Main {
     public static void exit() throws IOException {
         screen.stopScreen();
         terminal.dispose();
+        System.exit(0);
     }
 
-    public static void showInitialization() throws IOException, InterruptedException {
-        scene = "Initialization";
-
-        formatter.printMulti(2, new FileReader("ascii-art/main-title.txt"), TextFormatter.PaddingAlignment.CENTER);
-        formatter.printSingle(25, "Press the up and down arrows to enlarge/shrink the UI (Current size: " + uiSize + ") This text should be in the upper half of the terminal.", TextFormatter.PaddingAlignment.CENTER);
-        formatter.printSingle(26, "Press Enter to continue", TextFormatter.PaddingAlignment.CENTER);
-        screen.refresh();
-
-        while (scene.equals("Initialization")) {
-            KeyStroke key = screen.readInput();
-            if (key.getKeyType() == KeyType.Escape) break;
-            if (key.getKeyType() == KeyType.ArrowDown) {
-                screen.stopScreen();
-                terminal.dispose();
-                uiSize++;
-                main(null);
-            }
-            if (key.getKeyType() == KeyType.ArrowUp) {
-                screen.stopScreen();
-                terminal.dispose();
-                uiSize--;
-                main(null);
-            }
-
-            //continue
-            if (key.getKeyType() == KeyType.Enter) showMainMenu();
-            screen.refresh();
-        }
-    }
 
     public static void main(String[] args) throws IOException, InterruptedException {
         //creates terminal screen inside window with formatter object for easier multi line editing
@@ -82,7 +45,7 @@ public class Main {
         formatter = new TextFormatter(tg, screen.getTerminalSize().getColumns());
 
         //title screen with UI resize
-        showInitialization();
+        SceneController.loadScene("Initialization");
     }
 
 
