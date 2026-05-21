@@ -2,24 +2,24 @@ import java.io.IOException;
 
 public class SceneController {
     public static void loadScene(String scene) throws IOException, InterruptedException {
-        switch (scene) {
-            case "Main Menu" -> MainMenu.showMainMenu();
-            case "Options Menu" -> Options.drawOptions();
-            case "Initialization" -> Initialization.showInitialization();
-            case "Play Menu" -> PlayGame.playOptions();
-            case "Create Save" -> PlayGame.createSave();
-            case "Exit" -> Main.exit();
-            case "Saves Explorer" -> {
+        switch (scene.toLowerCase()) {
+            case "main menu" -> MainMenu.showMainMenu();
+            case "options menu" -> Options.drawOptions();
+            case "initialization" -> Initialization.showInitialization();
+            case "play menu" -> PlayGame.playOptions();
+            case "create save" -> PlayGame.createSave();
+            case "exit" -> Main.exit();
+            case "saves explorer" -> {
                 SaveHandler.openExplorer();
                 Options.drawOptions();
             }
-            case "Delete Saves" -> Options.confirmDeletion();
-            case "Confirm Deletion" -> {
+            case "delete saves" -> Options.confirmDeletion();
+            case "confirm deletion" -> {
                 SaveHandler.deleteSaves();
                 Options.drawOptions();
             }
-            case "Load Saves" -> PlayGame.loadSaves();
-            case "Encounter selection" -> PlayGame.testBattle();
+            case "load saves" -> PlayGame.loadSaves();
+            case "encounter selection" -> PlayGame.testBattle();
         }
     }
 }

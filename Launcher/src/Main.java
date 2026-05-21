@@ -13,7 +13,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class Main {
-    public static int uiSize = 7;
+    public static int uiSize = 8;
     public static String scene;
     //global variables so that they can be accessed without being passed as arguments to functions
     public static SwingTerminalFrame terminal;
