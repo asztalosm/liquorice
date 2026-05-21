@@ -9,19 +9,24 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
 
 public record TextFormatter(TextGraphics tg, int cols) {
+    // public static void main(String[] args) {
+    //     ColorMap.put("YELLOW", TextColor.ANSI.YELLOW);
+    //     ColorMap.put("WHITE", TextColor.ANSI.WHITE);
+    // }
 
     //region enums and global variables
     public enum PaddingAlignment { //Alignment for where the text will be shown on the terminal screen
         LEFT, CENTER, RIGHT
     }
 
-    /*public enum TextAlignment { //Maybe I'll do this if we need to float text to the left or right
+    public enum TextAlignment { //Maybe I'll do this if we need to float text to the left or right
         LEFT, CENTER, RIGHT
     }
-     */
 
     public enum BorderStyle {
         //add more if needed
@@ -30,6 +35,7 @@ public record TextFormatter(TextGraphics tg, int cols) {
         ROUNDED // ╭ ─ ╮ │ ╰ ╯
     }
 
+    // public static HashMap<String, TextColor.ANSI> ColorMap = new HashMap<>();
     //endregion
 
     //region functions that return values
@@ -41,7 +47,7 @@ public record TextFormatter(TextGraphics tg, int cols) {
         };
     }
 
-    public List<String> getBorderStyle(BorderStyle borderStyle) {
+    public static List<String> getBorderStyle(BorderStyle borderStyle) {
         return switch (borderStyle) {
             case SINGLE -> Arrays.asList("┌", "─", "┐", "│", "└", "┘");
             case DOUBLE -> Arrays.asList("╔", "═", "╗", "║", "╚", "╝");
@@ -55,6 +61,16 @@ public record TextFormatter(TextGraphics tg, int cols) {
             longest = list.stream().max(Comparator.comparingInt(String::length)).get();
         }
         return longest;
+    }
+
+    private static List<String> getGreaterList(List<List<String>> lists) {
+        List<String> greatest = new ArrayList<>();
+        for (List<String> li : lists) {
+            if (li.size() > greatest.size()) {
+                greatest = li;
+            }
+        }
+        return greatest;
     }
     //endregion
 
@@ -252,6 +268,42 @@ public record TextFormatter(TextGraphics tg, int cols) {
         }
     }
 
+    public String promptTextInput(int row, PaddingAlignment paddingAlignment, String prompt) throws IOException, InterruptedException {
+        StringBuilder input = new StringBuilder();
+        tg.putString(getStartColumn(prompt, paddingAlignment), row, prompt);
+        Main.screen.refresh();
+        while (true) {
+            Main.screen.refresh();
+            // String cleared = " ".repeat(prompt.concat(input.toString()).length() + prompt.length());
+            String cleared = " ".repeat(cols);
+            tg.putString(getStartColumn(cleared, paddingAlignment), row, cleared); // clear old text
+            // draw current input centered
+            KeyStroke key = Main.screen.readInput();
+            if (key == null) continue;
+            switch (key.getKeyType()) {
+                case Character -> {
+                    if (!key.getCharacter().equals(' ')) {
+                        input.append(key.getCharacter());
+                    }
+                }
+                case Backspace -> {
+                    if (!input.isEmpty()) {
+                        input.deleteCharAt(input.length() - 1);
+                    }
+                }
+                case Enter -> {
+                    return input.toString();
+                } // null signals canceled input
+                default -> {
+                }
+            }
+            String line = prompt.concat(input.toString());
+            // String cleared = " ".repeat(line.length() + 1);
+            tg.putString(getStartColumn(cleared, paddingAlignment), row, cleared); // clear old text
+            tg.putString(getStartColumn(prompt, paddingAlignment), row, line);
+        }
+    }
+
     public void askTextInputFileValidation(int row, PaddingAlignment paddingAlignment, String previousScene, String nextScene) throws IOException, InterruptedException {
         //same as previous but it checks for pre-existing files
         StringBuilder input = new StringBuilder();
@@ -335,6 +387,84 @@ public record TextFormatter(TextGraphics tg, int cols) {
         }
     }
 
+    //endregion
+    
+    //region art loader
+    public List<String> loadArt(String path) {
+        List<String> product = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                product.add(line);
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + path);
+        }
+        return product;
+    }
+    //endregion
+
+    //region connect multi
+    public List<String> connectAsciiArt(List<List<String>> texts) {
+        return connectAsciiArt(texts, 6);
+    }
+
+    public List<String> connectAsciiArt(List<List<String>> texts, int p) {
+        List<String> product = new ArrayList<>();
+        List<String> maxList = getGreaterList(texts);
+        int maxRows = maxList.size();
+        
+        for (int ii = 0; ii < maxRows; ii++) {
+            StringBuilder subproduct = new StringBuilder();
+            for (int i = 0; i < texts.size(); i++) {
+                List<String> text = texts.get(i);
+                String padding = (i < texts.size() - 1) ? " ".repeat(p) : "";
+                try {
+                    subproduct.append(text.get(ii)).append(padding);
+                } catch (IndexOutOfBoundsException e) {
+                    if (!text.isEmpty()) {
+                        subproduct.append(" ".repeat(text.get(0).length())).append(padding);
+                    }
+                }
+            }
+            product.add(subproduct.toString());
+        }
+        return product;
+    }
+    //endregion
+
+    //region create box
+    //I know that we have a box printing function already but I need this for the combat menus
+    public List<String> createBox(int w, int h, List<String> content, BorderStyle bs) {
+
+        if (content.size() > h) {
+            h = content.size();
+        }
+        for (String line : content) {
+            if (line.length() > w) {
+                w = line.length();
+            }
+        }
+
+        List<String> box = new ArrayList<>();
+        box.add(getBorderStyle(bs).get(0) + getBorderStyle(bs).get(1) + getBorderStyle(bs).get(1).repeat(w) + getBorderStyle(bs).get(1) + getBorderStyle(bs).get(2));
+
+        for (int i = 0; i < h + 1; i++) {
+            String line;
+            if (i == h) {
+                line = getBorderStyle(bs).get(4) + getBorderStyle(bs).get(1) + getBorderStyle(bs).get(1).repeat(w) + getBorderStyle(bs).get(1) + getBorderStyle(bs).get(5);
+            } else {
+                try {
+                    String content_line = content.get(i);
+                    line = getBorderStyle(bs).get(3)+" " + (content_line + " ".repeat(Math.max(0, w - content_line.length()))) + " "+getBorderStyle(bs).get(3);
+                } catch (IndexOutOfBoundsException e) {
+                    line = getBorderStyle(bs).get(3)+" " + " ".repeat(w) + " "+getBorderStyle(bs).get(3);
+                }
+            }
+            box.add(line);
+        }
+        return box;
+    }
     //endregion
 }
 

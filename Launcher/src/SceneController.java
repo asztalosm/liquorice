@@ -19,6 +19,7 @@ public class SceneController {
                 Options.drawOptions();
             }
             case "Load Saves" -> PlayGame.loadSaves();
+            case "Encounter selection" -> PlayGame.testBattle();
         }
     }
 }

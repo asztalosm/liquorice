@@ -1,3 +1,4 @@
+import GameClasses.GameClasses;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
@@ -26,5 +27,16 @@ public class PlayGame {
         Main.screen.refresh();
         Main.formatter.printMulti(2, new FileReader("ascii-art/main-title.txt"), TextFormatter.PaddingAlignment.CENTER);
         Main.formatter.printSelectionMultiLine(16, List.of("Encounter Selection", "Character", "Exit"), List.of("Encounter Selection", "Character", "Save and Menu"), TextFormatter.PaddingAlignment.CENTER);
+    }
+
+    public static void testBattle() throws IOException, InterruptedException {
+        Combat.battle(
+            new GameClasses.Entity("L", 5, 5, 1, 1, "ascii-art/jane.txt", null, null), 
+            List.of(
+                new GameClasses.Entity("X", 5, 5, 1, 1, "ascii-art/jane.txt", null, null),
+                new GameClasses.Entity("Y", 5, 5, 1, 1, "ascii-art/jane.txt", null, null),
+                new GameClasses.Entity("Z", 5, 5, 1, 1, "ascii-art/jane.txt", null, null)
+            )
+        );
     }
 }
