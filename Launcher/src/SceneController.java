@@ -20,6 +20,7 @@ public class SceneController {
             }
             case "load saves" -> PlayGame.loadSaves();
             case "encounter selection" -> PlayGame.testBattle();
+            case "initialize save" -> PlayGame.initializeSave();
         }
     }
 }

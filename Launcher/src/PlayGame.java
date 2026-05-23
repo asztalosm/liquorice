@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class PlayGame {
+
     public static void playOptions() throws IOException, InterruptedException {
         Main.scene = "Play Menu";
         Main.screen.clear();
@@ -18,7 +19,17 @@ public class PlayGame {
         Main.screen.refresh();
         Main.formatter.printMulti(2, new FileReader("ascii-art/main-title.txt"), TextFormatter.PaddingAlignment.CENTER);
         Main.formatter.printSingle(16, "What should be the name of your save?", TextFormatter.PaddingAlignment.CENTER);
-        Main.formatter.askTextInputFileValidation(17, TextFormatter.PaddingAlignment.CENTER, "Play Menu", "Play Menu");
+        Main.formatter.askTextInputFileValidation(17, TextFormatter.PaddingAlignment.CENTER, "Play Menu", "Initialize Save");
+    }
+
+    public static void initializeSave() throws IOException, InterruptedException {
+        Main.scene = "Initialize Save";
+        Main.screen.clear();
+        Main.screen.refresh();
+        Main.formatter.printMulti(2, new FileReader("ascii-art/main-title.txt"), TextFormatter.PaddingAlignment.CENTER);
+        Main.formatter.printSingle(16, "What should be the name of your character?", TextFormatter.PaddingAlignment.CENTER);
+        String playerName = Main.formatter.askTextInput(17, TextFormatter.PaddingAlignment.CENTER, "Play Menu", "Load Saves");
+        System.out.println(playerName);
     }
 
     public static void loadSaves() throws IOException, InterruptedException {

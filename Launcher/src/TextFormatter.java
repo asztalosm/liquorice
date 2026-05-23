@@ -233,7 +233,7 @@ public record TextFormatter(TextGraphics tg, int cols) {
 
     //region askInput stuff
 
-    public void askTextInput(int row, PaddingAlignment paddingAlignment, String previousScene, String nextScene) throws IOException, InterruptedException {
+    public String askTextInput(int row, PaddingAlignment paddingAlignment, String previousScene, String nextScene) throws IOException, InterruptedException {
         StringBuilder input = new StringBuilder();
         tg.putString(getStartColumn("", paddingAlignment), row, "> ");
         Main.screen.refresh();
@@ -256,7 +256,7 @@ public record TextFormatter(TextGraphics tg, int cols) {
                 case Enter -> {
                     SaveHandler.createNewSave(input.toString());
                     SceneController.loadScene(nextScene);
-                    return;
+                    return input.toString();
                 }
                 case Escape -> SceneController.loadScene(previousScene); // null signals canceled input
             }
