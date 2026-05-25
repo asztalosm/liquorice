@@ -58,7 +58,7 @@ public class Campaign {
      public static List<GameClasses.Entity> generateEncounter(List<GameClasses.Entity> enemyPool, int num) {
           List<GameClasses.Entity> product = new ArrayList<>();
           for (int i = 0; i < num; i++) {
-               product.add(enemyPool.get(GameClasses.randInt(0, enemyPool.size())));
+               product.add(new GameClasses.Entity(enemyPool.get(GameClasses.randInt(0, enemyPool.size()-1))));
           }
           return product;
      }

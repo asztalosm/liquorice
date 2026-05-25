@@ -22,9 +22,9 @@ public class SceneController {
             case "campaign selector" -> Campaign.CampaignSelector();
             case "test" -> PlayGame.testBattle();
             case "initialize save" -> PlayGame.initializeSave();
-            case "northern farms" -> {}
-            case "eastern farms" -> {}
-            case "western farms" -> {}
+            case "northern farms" -> CampaignHandler.east();
+            case "eastern farms" -> CampaignHandler.east();
+            case "western farms" -> CampaignHandler.east();
         }
     }
 }

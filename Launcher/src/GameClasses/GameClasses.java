@@ -186,6 +186,7 @@ public class GameClasses {
             this.Alive = other.Alive;
             this.NextActionTime = other.NextActionTime;
             this.id = other.id;
+            this.PlannedAttack = other.PlannedAttack;
             // this.id = UnitIdGenerator.generateId();
         }
         

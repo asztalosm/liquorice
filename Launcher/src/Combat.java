@@ -35,7 +35,7 @@ public class Combat {
         void visualise(Entity currEntity) throws IOException, InterruptedException;
         GameClasses.Equipment chooseEquipment(Entity currEntity) throws IOException, InterruptedException;
         void clearEnemyPanel() throws IOException, InterruptedException;
-        boolean isCleared(List<Entity> li) throws IOException, InterruptedException;
+        boolean clearCheck(List<Entity> li) throws IOException, InterruptedException;
         void printParticipants(Entity currEntity, boolean doTarget) throws IOException, InterruptedException;
         GameClasses.Attack chooseAttack(Entity currEntity) throws IOException, InterruptedException;
         String chooseAction(Entity currEntity) throws IOException, InterruptedException;
@@ -228,9 +228,9 @@ public class Combat {
             }
 
             @Override
-            public boolean isCleared(List<Entity> li) throws IOException {
+            public boolean clearCheck(List<Entity> li) throws IOException {
                 for (Entity enemy : li) {
-                    if (enemy.Alive && User.Alive) {
+                    if (enemy.Alive) {
                         return true;
                     }
                 }
@@ -239,7 +239,7 @@ public class Combat {
         };
 
         //region Combat logic
-        while (User.Alive && combatHandler.isCleared(tempEnemies)) { 
+        while (User.Alive && combatHandler.clearCheck(tempEnemies)) { 
 
             Entity current = order.poll();
             
