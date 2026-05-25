@@ -2,7 +2,6 @@ import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.screen.Screen;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -10,7 +9,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.ArrayList;
+
+import GameClasses.GameClasses;
 
 public record TextFormatter(TextGraphics tg, int cols) {
     // public static void main(String[] args) {
@@ -20,7 +24,7 @@ public record TextFormatter(TextGraphics tg, int cols) {
 
     //region enums and global variables
     public enum PaddingAlignment { //Alignment for where the text will be shown on the terminal screen
-        LEFT, CENTER, RIGHT
+        LEFT, LC, CENTER, RC, RIGHT
     }
 
     public enum TextAlignment { //Maybe I'll do this if we need to float text to the left or right
@@ -31,17 +35,24 @@ public record TextFormatter(TextGraphics tg, int cols) {
         //add more if needed
         SINGLE, // ┌ ─ ┐ │ └ ┘
         DOUBLE, // ╔ ═ ╗ ║ ╚ ╝
-        ROUNDED // ╭ ─ ╮ │ ╰ ╯
+        ROUNDED, // ╭ ─ ╮ │ ╰ ╯
+        NOTHING // nothing
     }
 
     // public static HashMap<String, TextColor.ANSI> ColorMap = new HashMap<>();
     //endregion
 
     //region functions that return values
+    public int getCols() {
+        return cols;
+    }
+
     public int getStartColumn(String line, PaddingAlignment paddingAlignment) {
         return switch (paddingAlignment) {
             case LEFT -> 0;
+            case LC -> ((cols / 3) - (line.length() / 2));
             case CENTER -> ((cols / 2) - (line.length() / 2));
+            case RC -> (cols-(cols / 3) - (line.length() / 2));
             case RIGHT -> cols - line.length();
         };
     }
@@ -51,6 +62,7 @@ public record TextFormatter(TextGraphics tg, int cols) {
             case SINGLE -> Arrays.asList("┌", "─", "┐", "│", "└", "┘");
             case DOUBLE -> Arrays.asList("╔", "═", "╗", "║", "╚", "╝");
             case ROUNDED -> Arrays.asList("╭", "─", "╮", "│", "╰", "╯");
+            case NOTHING -> Arrays.asList(" ", " ", " ", " ", " ", " ");
         };
     }
 
@@ -62,10 +74,20 @@ public record TextFormatter(TextGraphics tg, int cols) {
         return longest;
     }
 
-    private static List<String> getGreaterList(List<List<String>> lists) {
+    public static List<String> getGreaterList(List<List<String>> lists) {
         List<String> greatest = new ArrayList<>();
         for (List<String> li : lists) {
             if (li.size() > greatest.size()) {
+                greatest = li;
+            }
+        }
+        return greatest;
+    }
+
+    public  static String getLongestString(List<String> strs) {
+        String greatest = "";
+        for (String li : strs) {
+            if (li.length() > greatest.length()) {
                 greatest = li;
             }
         }
@@ -79,7 +101,6 @@ public record TextFormatter(TextGraphics tg, int cols) {
         Main.screen.refresh();
     }
 
-/*
     public void printSingle(int row, String line, PaddingAlignment paddingAlignment, BorderStyle borderStyle) throws IOException {
         List<String> borderCharacters = getBorderStyle(borderStyle);
 
@@ -100,10 +121,24 @@ public record TextFormatter(TextGraphics tg, int cols) {
         tg.putString(getStartColumn(line,paddingAlignment)-1, row+1, borderBottom);
         Main.screen.refresh();
     }
-*/
+
     //endregion
 
     //region multi print functions and overrides
+    public void printMultiIgnore(int startRow, List<String> lines, PaddingAlignment paddingAlignment, TextColor color) throws IOException {
+        int currentLine = startRow;
+        int start = getStartColumn(lines.get(0), paddingAlignment);
+        Main.tg.setForegroundColor(color);
+        for (String line : lines) {
+            for (int i = 0; i < line.length(); i++) {
+                if (line.charAt(i) != ' ') {tg.putString(start+i, currentLine, String.valueOf(line.charAt(i)));}
+            }
+            currentLine++;
+        }
+        Main.tg.setForegroundColor(TextColor.ANSI.DEFAULT);
+        Main.screen.refresh();
+    }
+
     public void printMulti(int startRow, String text, PaddingAlignment paddingAlignment) throws IOException {
         String[] lines = text.split("\n");
         int currentLine = startRow;
@@ -123,7 +158,6 @@ public record TextFormatter(TextGraphics tg, int cols) {
         Main.screen.refresh();
     }
 
-    /*
     public void printMulti(int startRow, List<String> lines, PaddingAlignment paddingAlignment, BorderStyle borderStyle, int verticalPadding) throws IOException {
         List<String> borderCharacters = getBorderStyle(borderStyle);
         String longest = getLongestElementLength(lines);
@@ -164,7 +198,7 @@ public record TextFormatter(TextGraphics tg, int cols) {
         tg.putString(borderStartCol, currentLine, borderBottom);
         Main.screen.refresh();
     }
-    */
+
     public void printMulti(int startRow, FileReader file, PaddingAlignment paddingAlignment) throws IOException {
         int currentLine = startRow;
         try (BufferedReader br = new BufferedReader(file)) {
@@ -177,59 +211,6 @@ public record TextFormatter(TextGraphics tg, int cols) {
             System.out.println("Error reading file");
         }
         Main.screen.refresh();
-    }
-    //endregion asdasd
-
-    //region draw functions
-
-    public void drawOptions(int startRow, List<String> options, PaddingAlignment paddingAlignment, int selection) {
-        int currentRow = startRow;
-        for (int i = 0; i < options.size(); i++) {
-            if (selection == i) {
-                tg.putString(getStartColumn(options.get(i), paddingAlignment)-2, currentRow,"> " + options.get(i));
-            } else {
-                tg.putString(getStartColumn(options.get(i), paddingAlignment)-2, currentRow, "  " + options.get(i));
-            }
-            currentRow++;
-        }
-    }
-
-    //endregion
-
-    //region Option printing
-
-    public void printOptionsInLine(int row, List<String> options, PaddingAlignment paddingAlignment, int padding) {
-        for (String option : options) {
-
-            for (int i = 0; i < padding; i++) {
-                option = " ".concat(option);
-                option = option.concat(" ");
-            }
-            tg.putString(getStartColumn(option, paddingAlignment) - (padding / 2), row, option);
-        } //this is broken as fuck and I don't have the brain capacity to fix it, I'll do multi line instead
-    }
-
-    public void printSelectionMultiLine(int startRow, List<String> options, List<String> sceneOptions, PaddingAlignment paddingAlignment) throws IOException, InterruptedException {
-        //bit fucked, but now we have 2 lists, one is for displaying text, one is for scene controller options, scenecontroller will handle most of the bullshit with just a switch case, this way we don't have to hardcode anything
-        int selection = 0;
-        drawOptions(startRow, options, paddingAlignment, selection);
-        Main.screen.refresh();
-
-        while (true) {
-            KeyStroke key = Main.screen.readInput();
-            if (key == null) continue;
-            switch (key.getKeyType()) {
-                case ArrowUp -> selection = Math.max(0, selection - 1);
-                case ArrowDown -> selection = Math.min(sceneOptions.size() -1 , selection + 1);
-                case Enter -> {
-                    SceneController.loadScene(sceneOptions.get(selection));
-                    return;
-                }
-                //case Escape -> Main.exit(); idk how much this will break stuff, but I hope this is better ?
-            }
-            drawOptions(startRow, options, paddingAlignment, selection);
-            Main.screen.refresh();
-        }
     }
 
     public void printSaveSelection(int startRow, List<File> saves, PaddingAlignment paddingAlignment) throws IOException, InterruptedException {
@@ -264,11 +245,191 @@ public record TextFormatter(TextGraphics tg, int cols) {
 
     }
 
+    public void alert(int startRow, List<String> message) throws IOException, InterruptedException {
+        List<String> content = new ArrayList<>(List.of("!!! ALERT !!!"));
+        content.add("");
+        content.addAll(message);
+        content = createBox(1, 1, content, BorderStyle.SINGLE);
+        printMulti(startRow, content, PaddingAlignment.CENTER);
+        promptTextInput(startRow+content.size()-1, PaddingAlignment.CENTER, "[OK]");
+        printMulti(startRow, createBox(getLongestElementLength(content).length(), content.size()+2, List.of(""), BorderStyle.NOTHING), PaddingAlignment.CENTER);
+
+    }
+    //endregion asdasd
+
+    //region draw functions
+
+    public void drawOptions(int startRow, List<String> options, PaddingAlignment paddingAlignment, int selection) {
+        int currentRow = startRow;
+        for (int i = 0; i < options.size(); i++) {
+            if (selection == i) {
+                tg.putString(getStartColumn(options.get(i), paddingAlignment)-2, currentRow,"> " + options.get(i));
+            } else {
+                tg.putString(getStartColumn(options.get(i), paddingAlignment)-2, currentRow, "  " + options.get(i));
+            }
+            currentRow++;
+        }
+    }
+    //endregion
+
+    //region Option printing
+
+    // public void printOptionsInLine(int row, List<String> options, PaddingAlignment paddingAlignment, int padding) {
+    //     for (String option : options) {
+
+    //         for (int i = 0; i < padding; i++) {
+    //             option = " ".concat(option);
+    //             option = option.concat(" ");
+    //         }
+    //         tg.putString(getStartColumn(option, paddingAlignment) - (padding / 2), row, option);
+    //     } //this is broken as fuck and I don't have the brain capacity to fix it, I'll do multi line instead
+    // }
+
+    public void printSelectionMultiLine(int startRow, List<String> options, List<String> sceneOptions, PaddingAlignment paddingAlignment) throws IOException, InterruptedException {
+        //bit fucked, but now we have 2 lists, one is for displaying text, one is for scene controller options, scenecontroller will handle most of the bullshit with just a switch case, this way we don't have to hardcode anything
+        int selection = 0;
+        drawOptions(startRow, options, paddingAlignment, selection);
+        Main.screen.refresh();
+
+        while (true) {
+            KeyStroke key = Main.screen.readInput();
+            if (key == null) continue;
+            switch (key.getKeyType()) {
+                case ArrowUp -> selection = Math.max(0, selection - 1);
+                case ArrowDown -> selection = Math.min(sceneOptions.size() -1 , selection + 1);
+                case Enter -> {
+                    SceneController.loadScene(sceneOptions.get(selection));
+                    return;
+                }
+                case Escape -> Main.exit();
+            }
+            drawOptions(startRow, options, paddingAlignment, selection);
+            Main.screen.refresh();
+        }
+    }
+
+    public String printSelection(int startRow, List<String> options, List<String> returnOptions, PaddingAlignment paddingAlignment) throws IOException, InterruptedException {
+        //This is the same as the one from before but it does not have a scene controller
+        int selection = 0;
+        drawOptions(startRow, options, paddingAlignment, selection);
+        Main.screen.refresh();
+
+        while (true) {
+            KeyStroke key = Main.screen.readInput();
+            if (key == null) continue;
+            switch (key.getKeyType()) {
+                case ArrowUp -> selection = Math.max(0, selection - 1);
+                case ArrowDown -> selection = Math.min(returnOptions.size() -1 , selection + 1);
+                case Enter -> {
+                    return returnOptions.get(selection);
+                }
+                case Escape -> Main.exit();
+            }
+            drawOptions(startRow, options, paddingAlignment, selection);
+            Main.screen.refresh();
+        }
+    }
+
+    public GameClasses.Attack printAttackSelection(int startRow, List<String> initialOptions, List<GameClasses.Attack> returnOptions, PaddingAlignment paddingAlignment) throws IOException, InterruptedException {
+        //This is the same as the one from before but it does not have a scene controller and returns an attack
+        List<String> options = new ArrayList<>(initialOptions);
+        int selection = 0;
+        int longest = getLongestString(options).length();
+        for (int i = 0; i < options.size(); i++) {
+            String option = options.get(i);
+            while (option.length()<longest) {
+                option += " ";
+            }
+            options.set(i, option);
+        }
+        printMulti(startRow-1, createBox(longest+2, options.size(), List.of(), BorderStyle.ROUNDED), paddingAlignment);
+        drawOptions(startRow, options, paddingAlignment, selection);
+        Main.screen.refresh();
+
+        while (true) {
+            KeyStroke key = Main.screen.readInput();
+            if (key == null) continue;
+            switch (key.getKeyType()) {
+                case ArrowUp -> selection = Math.max(0, selection - 1);
+                case ArrowDown -> selection = Math.min(returnOptions.size()-1 , selection+1);
+                case Enter -> {
+                    return returnOptions.get(selection);
+                }
+                case Escape -> Main.exit();
+            }
+            drawOptions(startRow, options, paddingAlignment, selection);
+            Main.screen.refresh();
+        }
+    }
+
+    public GameClasses.Equipment printEquipmentSelection(int startRow, List<String> initialOptions, List<GameClasses.Equipment> returnOptions, PaddingAlignment paddingAlignment) throws IOException, InterruptedException {
+        //This is the same as the one from before but it does not have a scene controller and returns an attack
+        List<String> options = new ArrayList<>(initialOptions);
+        int selection = 0;
+        int longest = getLongestString(options).length();
+        for (int i = 0; i < options.size(); i++) {
+            String option = options.get(i);
+            while (option.length()<longest) {
+                option += " ";
+            }
+            options.set(i, option);
+        }
+        printMulti(startRow-1, createBox(longest+2, options.size(), List.of(), BorderStyle.ROUNDED), paddingAlignment);
+        drawOptions(startRow, options, paddingAlignment, selection);
+        Main.screen.refresh();
+
+        while (true) {
+            KeyStroke key = Main.screen.readInput();
+            if (key == null) continue;
+            switch (key.getKeyType()) {
+                case ArrowUp -> selection = Math.max(0, selection - 1);
+                case ArrowDown -> selection = Math.min(returnOptions.size()-1 , selection+1);
+                case Enter -> {
+                    return returnOptions.get(selection);
+                }
+                case Escape -> Main.exit();
+            }
+            drawOptions(startRow, options, paddingAlignment, selection);
+            Main.screen.refresh();
+        }
+    }
+
+    public String printSelectionInBox(int startRow, List<String> initialOptions, List<String> returnOptions, PaddingAlignment paddingAlignment, BorderStyle borderStyle) throws IOException, InterruptedException {
+        //this one puts the elements into a box for the combat menu and that's pretty much it, the box is not part of the option drawer itself
+        List<String> options = new ArrayList<>(initialOptions);
+        int selection = 0;
+        int longest = getLongestString(options).length();
+        for (int i = 0; i < options.size(); i++) {
+            String option = options.get(i);
+            while (option.length()<longest) {
+                option += " ";
+            }
+            options.set(i, option);
+        }
+        printMulti(startRow-1, createBox(longest+2, options.size(), List.of(), borderStyle), paddingAlignment);
+        drawOptions(startRow, options, paddingAlignment, selection);
+        Main.screen.refresh();
+
+        while (true) {
+            KeyStroke key = Main.screen.readInput();
+            if (key == null) continue;
+            switch (key.getKeyType()) {
+                case ArrowUp -> selection = Math.max(0, selection - 1);
+                case ArrowDown -> selection = Math.min(returnOptions.size()-1 , selection+1);
+                case Enter -> {
+                    return returnOptions.get(selection);
+                }
+                case Escape -> Main.exit();
+            }
+            drawOptions(startRow, options, paddingAlignment, selection);
+            Main.screen.refresh();
+        }
+    }
     //endregion
 
     //region askInput stuff
 
-    public String askTextInput(int row, PaddingAlignment paddingAlignment, String previousScene, String nextScene) throws IOException, InterruptedException {
+        public String askTextInput(int row, PaddingAlignment paddingAlignment, String previousScene, String nextScene) throws IOException, InterruptedException {
         StringBuilder input = new StringBuilder();
         tg.putString(getStartColumn("", paddingAlignment), row, "> ");
         Main.screen.refresh();

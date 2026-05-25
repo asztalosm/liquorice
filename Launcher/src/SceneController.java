@@ -19,8 +19,12 @@ public class SceneController {
                 Options.drawOptions();
             }
             case "load saves" -> PlayGame.loadSaves();
-            case "encounter selection" -> PlayGame.testBattle();
+            case "campaign selector" -> Campaign.CampaignSelector();
+            case "test" -> PlayGame.testBattle();
             case "initialize save" -> PlayGame.initializeSave();
+            case "northern farms" -> {}
+            case "eastern farms" -> {}
+            case "western farms" -> {}
         }
     }
 }
