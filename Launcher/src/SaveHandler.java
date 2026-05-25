@@ -37,12 +37,15 @@ public class SaveHandler {
         pb.start();
     }
 
-    public static List<Saves>
+    public static List<File> getSavesList() {
+        File folder = new File(saveDirectory.toUri());
+        return new ArrayList<>(Arrays.asList(Objects.requireNonNull(folder.listFiles())));
+    }
 
     public static boolean checkFileExists(String saveName) throws IOException {
         File folder = new File(saveDirectory.toUri());
         for (File file : Objects.requireNonNull(folder.listFiles())) {
-            if (file.getName().equals(saveName)) return true;
+            if (file.getName().toLowerCase().equals(saveName)) return true;
         }
         return false;
     }

@@ -1,6 +1,7 @@
 import GameClasses.GameClasses;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Savepoint;
 import java.util.List;
 
 public class PlayGame {
@@ -37,7 +38,7 @@ public class PlayGame {
         Main.screen.clear();
         Main.screen.refresh();
         Main.formatter.printMulti(2, new FileReader("ascii-art/main-title.txt"), TextFormatter.PaddingAlignment.CENTER);
-        Main.formatter.printSelectionMultiLine(16, List.of("Encounter Selection", "Character", "Exit"), List.of("Encounter Selection", "Character", "Save and Menu"), TextFormatter.PaddingAlignment.CENTER);
+        Main.formatter.printSaveSelection(16, SaveHandler.getSavesList(), TextFormatter.PaddingAlignment.CENTER);
     }
 
     public static void testBattle() throws IOException, InterruptedException {

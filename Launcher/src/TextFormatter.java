@@ -5,13 +5,12 @@ import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.screen.Screen;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public record TextFormatter(TextGraphics tg, int cols) {
     // public static void main(String[] args) {
@@ -79,6 +78,8 @@ public record TextFormatter(TextGraphics tg, int cols) {
         tg.putString(getStartColumn(line, paddingAlignment), row, line);
         Main.screen.refresh();
     }
+
+/*
     public void printSingle(int row, String line, PaddingAlignment paddingAlignment, BorderStyle borderStyle) throws IOException {
         List<String> borderCharacters = getBorderStyle(borderStyle);
 
@@ -99,7 +100,7 @@ public record TextFormatter(TextGraphics tg, int cols) {
         tg.putString(getStartColumn(line,paddingAlignment)-1, row+1, borderBottom);
         Main.screen.refresh();
     }
-
+*/
     //endregion
 
     //region multi print functions and overrides
@@ -122,6 +123,7 @@ public record TextFormatter(TextGraphics tg, int cols) {
         Main.screen.refresh();
     }
 
+    /*
     public void printMulti(int startRow, List<String> lines, PaddingAlignment paddingAlignment, BorderStyle borderStyle, int verticalPadding) throws IOException {
         List<String> borderCharacters = getBorderStyle(borderStyle);
         String longest = getLongestElementLength(lines);
@@ -162,7 +164,7 @@ public record TextFormatter(TextGraphics tg, int cols) {
         tg.putString(borderStartCol, currentLine, borderBottom);
         Main.screen.refresh();
     }
-
+    */
     public void printMulti(int startRow, FileReader file, PaddingAlignment paddingAlignment) throws IOException {
         int currentLine = startRow;
         try (BufferedReader br = new BufferedReader(file)) {
@@ -223,12 +225,45 @@ public record TextFormatter(TextGraphics tg, int cols) {
                     SceneController.loadScene(sceneOptions.get(selection));
                     return;
                 }
-                case Escape -> Main.exit();
+                //case Escape -> Main.exit(); idk how much this will break stuff, but I hope this is better ?
             }
             drawOptions(startRow, options, paddingAlignment, selection);
             Main.screen.refresh();
         }
     }
+
+    public void printSaveSelection(int startRow, List<File> saves, PaddingAlignment paddingAlignment) throws IOException, InterruptedException {
+        int selection = 0;
+        List<String> displayedSaveTexts = new ArrayList<>();
+        for (File save : saves) {
+            long lastModification = save.lastModified();
+            DateFormat sdf = new SimpleDateFormat("yyyy MM dd - hh:mm a");
+            displayedSaveTexts.add(save.getName() + sdf.format(lastModification));
+        }
+        drawOptions(startRow, displayedSaveTexts, paddingAlignment, selection);
+        Main.screen.refresh();
+
+        while (true) {
+            KeyStroke key = Main.screen.readInput();
+            if (key == null) continue;
+            switch (key.getKeyType()) {
+                case ArrowUp -> selection = Math.max(0, selection - 1);
+                case ArrowDown -> selection = Math.min(saves.size() -1 , selection + 1);
+                case Enter -> {
+                    Saves.loadSave(saves.get(selection));
+                    return;
+                }
+                case Escape -> {
+                    SceneController.loadScene("Play Menu");
+                    return;
+                }
+            }
+            drawOptions(startRow, displayedSaveTexts, paddingAlignment, selection);
+            Main.screen.refresh();
+        }
+
+    }
+
     //endregion
 
     //region askInput stuff
@@ -254,7 +289,6 @@ public record TextFormatter(TextGraphics tg, int cols) {
                     }
                 }
                 case Enter -> {
-                    SaveHandler.createNewSave(input.toString());
                     SceneController.loadScene(nextScene);
                     return input.toString();
                 }

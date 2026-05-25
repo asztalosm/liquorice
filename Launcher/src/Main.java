@@ -21,7 +21,6 @@ public class Main {
     public static TextGraphics tg;
     public static TextFormatter formatter;
 
-
     public static Screen createScreen(TerminalScreen terminal) throws IOException {
         terminal.startScreen();
         terminal.setCursorPosition(null);

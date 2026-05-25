@@ -8,7 +8,7 @@ public class Options {
         Main.screen.clear();
         Main.screen.refresh();
         Main.formatter.printMulti(2, new FileReader("ascii-art/main-title.txt"), TextFormatter.PaddingAlignment.CENTER);
-        Main.formatter.printSelectionMultiLine(15, List.of("Open saves folder in explorer", "Delete all saves", "Back"), List.of("Saves Explorer", "Delete Saves", "Main Menu"), TextFormatter.PaddingAlignment.CENTER);
+        Main.formatter.printSelectionMultiLine(15, List.of("Open saves folder in explorer", "Delete all saves", "Change UI Size", "Back"), List.of("Saves Explorer", "Delete Saves", "Initialization", "Main Menu"), TextFormatter.PaddingAlignment.CENTER);
     }
 
     public static void confirmDeletion() throws IOException, InterruptedException {
