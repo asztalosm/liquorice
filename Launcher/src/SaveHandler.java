@@ -49,4 +49,12 @@ public class SaveHandler {
         }
         return false;
     }
+
+    public static File getFile(String filename) throws IOException {
+        File file = new File(saveDirectory.toString() + "\\" + filename);
+        System.out.println("getFile path: " + file.getAbsolutePath());
+        System.out.println("exists: " + file.exists());
+        if (!file.exists()) file.createNewFile();
+        return file;
+    }
 }

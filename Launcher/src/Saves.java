@@ -22,14 +22,18 @@ public class Saves {
 
     public static void loadSave(File saveFile) throws IOException, InterruptedException {
         SaveData save = mapper.readValue(saveFile, SaveData.class);
+        Main.characterName = save.getName();
         SceneController.loadScene(save.getScene());
-        System.out.println(save.getName());
     }
 
-    public static void saveSave(File saveFile, String scene, String name) throws IOException {
+
+    public static void saveSave(File saveFile, String scene, String name) throws IOException, InterruptedException {
+        System.out.println("saveSave file: " + saveFile.getAbsoluteFile());
+        System.out.println("saveSave file exists:" + saveFile.exists());
         SaveData save = new SaveData();
+        save.setScene("eastern farms");
         save.setName(name);
-        save.setScene(scene);
         mapper.writeValue(saveFile, save);
+        loadSave(saveFile);
     }
 }

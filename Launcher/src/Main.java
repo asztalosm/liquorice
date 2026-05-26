@@ -19,6 +19,8 @@ public class Main {
     public static SwingTerminalFrame terminal;
     public static Screen screen;
     public static TextGraphics tg;
+    public static String characterName = "Marcukaa";
+
     public static TextFormatter formatter;
 
     public static Screen createScreen(TerminalScreen terminal) throws IOException {

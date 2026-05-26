@@ -64,7 +64,7 @@ public class Campaign {
      }
 
      public static void playCampaign(List<GameClasses.Entity> enemyPool, List<GameClasses.Entity> nemesisEntity) throws IOException, InterruptedException {
-          GameClasses.Entity User = new GameClasses.Entity("Marcukaa", 5, 10, 1, 2, "ascii-art/jane.txt", List.of(Weapons.TacticalAxe), null);
+          GameClasses.Entity User = new GameClasses.Entity(Main.characterName, 5, 10, 1, 2, "ascii-art/jane.txt", List.of(Weapons.TacticalAxe), null);
           while (User.Alive) {
                int enemyNum = GameClasses.randInt(1, 2);
                if (GameClasses.randInt(0, 100)>Globals.nemesisPercentage) {

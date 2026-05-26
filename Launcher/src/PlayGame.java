@@ -5,6 +5,8 @@ import java.sql.Savepoint;
 import java.util.List;
 
 public class PlayGame {
+    public static String fileName;
+    public static String characterName;
 
     public static void playOptions() throws IOException, InterruptedException {
         Main.scene = "Play Menu";
@@ -20,7 +22,8 @@ public class PlayGame {
         Main.screen.refresh();
         Main.formatter.printMulti(2, new FileReader("ascii-art/main-title.txt"), TextFormatter.PaddingAlignment.CENTER);
         Main.formatter.printSingle(16, "What should be the name of your save?", TextFormatter.PaddingAlignment.CENTER);
-        Main.formatter.askTextInputFileValidation(17, TextFormatter.PaddingAlignment.CENTER, "Play Menu", "Initialize Save");
+        fileName = Main.formatter.askTextInputFileValidation(17, TextFormatter.PaddingAlignment.CENTER, "Play Menu", "Initialize Save");
+        SceneController.loadScene("Initialize Save");
     }
 
     public static void initializeSave() throws IOException, InterruptedException {
@@ -29,8 +32,8 @@ public class PlayGame {
         Main.screen.refresh();
         Main.formatter.printMulti(2, new FileReader("ascii-art/main-title.txt"), TextFormatter.PaddingAlignment.CENTER);
         Main.formatter.printSingle(16, "What should be the name of your character?", TextFormatter.PaddingAlignment.CENTER);
-        String playerName = Main.formatter.askTextInput(17, TextFormatter.PaddingAlignment.CENTER, "Play Menu", "Load Saves");
-        System.out.println(playerName);
+        characterName = Main.formatter.askTextInput(17, TextFormatter.PaddingAlignment.CENTER, "Play Menu", "Load Saves");
+        Saves.saveSave(SaveHandler.getFile(fileName), "eastern farms", characterName);
     }
 
     public static void loadSaves() throws IOException, InterruptedException {

@@ -100,12 +100,11 @@ public record TextFormatter(TextGraphics tg, int cols) {
         tg.putString(getStartColumn(line, paddingAlignment), row, line);
         Main.screen.refresh();
     }
-
     public void printSingle(int row, String line, PaddingAlignment paddingAlignment, BorderStyle borderStyle) throws IOException {
         List<String> borderCharacters = getBorderStyle(borderStyle);
 
         //creates the lines for the string seperately
-        String borderTop = borderCharacters.getFirst();
+        String borderTop = borderCharacters.get(0);
         String borderBottom = borderCharacters.get(4);
         for (int i = 0; i < line.length(); i++) {
             borderTop = borderTop.concat(borderCharacters.get(1));
@@ -121,7 +120,6 @@ public record TextFormatter(TextGraphics tg, int cols) {
         tg.putString(getStartColumn(line,paddingAlignment)-1, row+1, borderBottom);
         Main.screen.refresh();
     }
-
     //endregion
 
     //region multi print functions and overrides
@@ -165,7 +163,7 @@ public record TextFormatter(TextGraphics tg, int cols) {
         int borderStartCol = getStartColumn(longest, paddingAlignment) - 1;
 
         //creates top and bottom border as strings
-        String borderTop = borderCharacters.getFirst();
+        String borderTop = borderCharacters.get(0);
         String borderBottom = borderCharacters.get(4);
         for (int i = 0; i < longestLength; i++) {
             borderTop = borderTop.concat(borderCharacters.get(1));
@@ -186,7 +184,7 @@ public record TextFormatter(TextGraphics tg, int cols) {
 
             tg.putString(borderStartCol, currentLine, paddedLine);
 
-            if (verticalPadding != 0 && (!line.equals(lines.getLast()))) {
+            if (verticalPadding != 0 && (!line.equals(lines.get(lines.size()-1)))) {
                 currentLine++;
                 String emptyLine = borderCharacters.get(3)
                         + " ".repeat(longestLength)
@@ -450,7 +448,6 @@ public record TextFormatter(TextGraphics tg, int cols) {
                     }
                 }
                 case Enter -> {
-                    SceneController.loadScene(nextScene);
                     return input.toString();
                 }
                 case Escape -> SceneController.loadScene(previousScene); // null signals canceled input
@@ -499,7 +496,7 @@ public record TextFormatter(TextGraphics tg, int cols) {
         }
     }
 
-    public void askTextInputFileValidation(int row, PaddingAlignment paddingAlignment, String previousScene, String nextScene) throws IOException, InterruptedException {
+    public String askTextInputFileValidation(int row, PaddingAlignment paddingAlignment, String previousScene, String nextScene) throws IOException, InterruptedException {
         //same as previous but it checks for pre-existing files
         StringBuilder input = new StringBuilder();
         tg.putString(getStartColumn("", paddingAlignment), row, "> ");
@@ -566,10 +563,9 @@ public record TextFormatter(TextGraphics tg, int cols) {
                         continue;
                     } else {
                         SaveHandler.createNewSave(input.toString());
-                        SceneController.loadScene(nextScene);
                     }
                     Main.screen.refresh();
-                    return;
+                    return input.toString();
                 }
                 case Escape -> SceneController.loadScene(previousScene); // null signals canceled input
             }
