@@ -44,6 +44,7 @@ public class Combat {
 
     public static void battle(Entity User, List<Entity> Enemies) throws IOException, InterruptedException {
         Main.scene = "Combat";
+        Saves.saveSave(Saves.currentFile, "eastern farms", Main.characterName, Globals.nemesisPercentage);
         List<Entity> tempEnemies = new ArrayList<>(Enemies);
         PriorityQueue<Entity> order = new PriorityQueue<>(java.util.Comparator
             .comparingDouble((Entity e) -> e.getNextActionTime())

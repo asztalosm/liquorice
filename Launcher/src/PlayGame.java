@@ -1,4 +1,6 @@
 import GameClasses.GameClasses;
+
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Savepoint;
@@ -33,7 +35,8 @@ public class PlayGame {
         Main.formatter.printMulti(2, new FileReader("ascii-art/main-title.txt"), TextFormatter.PaddingAlignment.CENTER);
         Main.formatter.printSingle(16, "What should be the name of your character?", TextFormatter.PaddingAlignment.CENTER);
         characterName = Main.formatter.askTextInput(17, TextFormatter.PaddingAlignment.CENTER, "Play Menu", "Load Saves");
-        Saves.saveSave(SaveHandler.getFile(fileName), "eastern farms", characterName);
+        Saves.saveSave(SaveHandler.getFile(fileName), "eastern farms", characterName, 0);
+        Saves.loadSave(SaveHandler.getFile(fileName));
     }
 
     public static void loadSaves() throws IOException, InterruptedException {

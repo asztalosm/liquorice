@@ -77,6 +77,7 @@ public class Campaign {
                     Globals.nemesisPercentage += enemyNum*2;
                     Main.formatter.alert(35, List.of("Good job, here comes the next bunch."));
                }
+               
           }
           Main.formatter.alert(35, List.of("Such a shame."));
      }
