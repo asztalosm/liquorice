@@ -42,12 +42,13 @@ public class PlayGame {
     }
 
     public static void testBattle() throws IOException, InterruptedException {
+        Main.scene = "Combat";
         Combat.battle(
-            new GameClasses.Entity("L", 5, 5, 1, 1, "ascii-art/jane.txt", null, null), 
+            new GameClasses.Entity("Natsuki DDLC", 5, 10, 1, 2, "ascii-art/jane.txt", List.of(Weapons.TacticalAxe), null), 
             List.of(
-                new GameClasses.Entity("X", 5, 5, 1, 1, "ascii-art/jane.txt", null, null),
-                new GameClasses.Entity("Y", 5, 5, 1, 1, "ascii-art/jane.txt", null, null),
-                new GameClasses.Entity("Z", 5, 5, 1, 1, "ascii-art/jane.txt", null, null)
+                new GameClasses.Entity("Foo", 1, 3, 0, 1, "ascii-art/jane.txt", List.of(Weapons.Fists), new String[] {"runescape 2 rat"}),
+                new GameClasses.Entity("Bar", 1, 3, 0, 1, "ascii-art/jane.txt", List.of(Weapons.ritualDagger), new String[] {"runescape 2 rat"}),
+                new GameClasses.Entity("Tsar Nicholas II.", 1, 3, 0, 1, "ascii-art/jane.txt", List.of(Weapons.rat), new String[] {"runescape 2 rat"})
             )
         );
     }

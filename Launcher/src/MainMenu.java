@@ -7,6 +7,6 @@ public class MainMenu {
         Main.scene = "Main Menu";
         Main.screen.clear();
         Main.formatter.printMulti(2, new FileReader("ascii-art/main-title.txt"), TextFormatter.PaddingAlignment.CENTER);
-        Main.formatter.printSelectionMultiLine(15, List.of("Play", "Settings", "Exit"), List.of("Play Menu", "Options Menu", "Exit"), TextFormatter.PaddingAlignment.CENTER);
+        Main.formatter.printSelectionMultiLine(15, List.of("Play", "Settings", "Start campaign", "Exit"), List.of("Play Menu", "Options Menu", "Campaign selector", "Exit"), TextFormatter.PaddingAlignment.CENTER);
     }
 }
