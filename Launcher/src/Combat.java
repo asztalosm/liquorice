@@ -303,11 +303,6 @@ public class Combat {
                                     combatHandler.clearAlertPanel();
                                     targetting = false;
                                 }
-                                case Escape -> {
-                                    System.out.println("Escape pressed");
-                                    Saves.saveSave(Saves.currentFile, "eastern farms", Main.characterName, Globals.nemesisPercentage);
-                                    SceneController.loadScene("Main Menu");
-                                }
                             }
                             Main.screen.refresh();
                         }

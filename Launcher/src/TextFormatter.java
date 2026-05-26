@@ -299,7 +299,6 @@ public record TextFormatter(TextGraphics tg, int cols) {
                     SceneController.loadScene(sceneOptions.get(selection));
                     return;
                 }
-                case Escape -> Main.exit();
             }
             drawOptions(startRow, options, paddingAlignment, selection);
             Main.screen.refresh();
@@ -321,7 +320,6 @@ public record TextFormatter(TextGraphics tg, int cols) {
                 case Enter -> {
                     return returnOptions.get(selection);
                 }
-                case Escape -> Main.exit();
             }
             drawOptions(startRow, options, paddingAlignment, selection);
             Main.screen.refresh();
@@ -353,7 +351,6 @@ public record TextFormatter(TextGraphics tg, int cols) {
                 case Enter -> {
                     return returnOptions.get(selection);
                 }
-                case Escape -> Main.exit();
             }
             drawOptions(startRow, options, paddingAlignment, selection);
             Main.screen.refresh();
@@ -385,7 +382,6 @@ public record TextFormatter(TextGraphics tg, int cols) {
                 case Enter -> {
                     return returnOptions.get(selection);
                 }
-                case Escape -> Main.exit();
             }
             drawOptions(startRow, options, paddingAlignment, selection);
             Main.screen.refresh();
@@ -417,7 +413,10 @@ public record TextFormatter(TextGraphics tg, int cols) {
                 case Enter -> {
                     return returnOptions.get(selection);
                 }
-                case Escape -> Main.exit();
+                case Escape -> {
+                    Saves.saveSave(Saves.currentFile, Main.scene, Main.characterName, Globals.nemesisPercentage);
+                    SceneController.loadScene("Main Menu");
+                }
             }
             drawOptions(startRow, options, paddingAlignment, selection);
             Main.screen.refresh();

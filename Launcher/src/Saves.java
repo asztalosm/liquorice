@@ -36,7 +36,7 @@ public class Saves {
         System.out.println("saveSave file: " + saveFile.getAbsoluteFile());
         System.out.println("saveSave file exists:" + saveFile.exists());
         SaveData save = new SaveData();
-        save.setScene("eastern farms");
+        save.setScene("Campaign selector");
         save.setName(name);
         save.setNemesisPercentage(nemesisPercentage);
         mapper.writeValue(saveFile, save);
