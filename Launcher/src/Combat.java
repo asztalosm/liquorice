@@ -132,7 +132,6 @@ public class Combat {
                     if (choice.Cost>currEntity.Stamina) {Main.formatter.alert(getSubMenuRow(), List.of("Not enough stamina."));}
                 } while (choice.Cost>currEntity.Stamina && choice.Cost!=0);
                 Main.formatter.printMulti(getMenuRow()-1, Main.formatter.createBox(TextFormatter.getLongestString(options).length()+2, 6, List.of(""), TextFormatter.BorderStyle.NOTHING), TextFormatter.PaddingAlignment.LC);
-                currEntity.Stamina -= choice.Cost;
                 return choice;
             }
 
