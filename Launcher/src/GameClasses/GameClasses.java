@@ -50,6 +50,16 @@ public class GameClasses {
             this.effectDesc = effectDesc;
         }
 
+        public StatusEffect(StatusEffect other, int count, boolean infinite) {
+            this.name = other.name;
+            this.duration = 1;
+            this.count = count;
+            this.infinite = infinite;
+            this.effectScript = other.effectScript;
+            this.callingOrder = other.callingOrder;
+            this.effectDesc = other.effectDesc;
+        }
+
         @Override
         public String toString() {
             return name + " " + count + " " + duration + " " + infinite;
@@ -148,7 +158,7 @@ public class GameClasses {
         private double NextActionTime;
         public String[] Description;
 
-        public Entity(String name, int maxHealth, int maxStamina, int endurance, int speed, String skinPath, List<Equipment> gear, String[] description) {
+        public Entity(String name, int maxHealth, int maxStamina, int endurance, int speed, String skinPath, List<Equipment> gear, List<StatusEffect> starterEffects, String[] description) {
             this.MaxHealth = maxHealth;
             this.Health = MaxHealth;
             this.MaxStamina = maxStamina;
@@ -158,18 +168,43 @@ public class GameClasses {
             this.Name = name;
             this.SkinPath = skinPath;
             this.Gear = gear;
+            this.Effects = new ArrayList<>(starterEffects);
             this.EquippedWeapon = gear.get(0);
             this.PlannedAttack = plan();
             this.Description = description;
-            this.Effects = new ArrayList<>();
             this.Passives = new ArrayList<>();
             this.Clock = 0;
             this.Alive = true;
             this.NextActionTime = 0d;
             this.id = UnitIdGenerator.generateId();
         }
+
+        public Entity(String name, int maxHealth, int maxStamina, int endurance, int speed, String skinPath, List<Equipment> gear, String[] description) {
+            this(name, maxHealth, maxStamina, endurance, speed, skinPath, gear, new ArrayList<StatusEffect>(), description);
+        }
         
         public Entity(Entity other) {
+            this.MaxHealth = other.MaxHealth;
+            this.Health = other.MaxHealth;
+            this.MaxStamina = other.MaxStamina;
+            this.Stamina = other.MaxStamina;
+            this.Endurance = other.Endurance;
+            this.Speed = other.Speed;
+            this.Name = other.Name;
+            this.SkinPath = other.SkinPath;
+            this.EquippedWeapon = other.EquippedWeapon;
+            this.Description = other.Description;
+            this.Effects = other.Effects;
+            this.Passives = other.Passives;
+            this.Clock = other.Clock;
+            this.Alive = other.Alive;
+            this.NextActionTime = other.NextActionTime;
+            this.id = other.id;
+            this.PlannedAttack = other.PlannedAttack;
+            // this.id = UnitIdGenerator.generateId();
+        }
+
+        public void copyFrom(Entity other) {
             this.MaxHealth = other.MaxHealth;
             this.Health = other.MaxHealth;
             this.MaxStamina = other.MaxStamina;
@@ -189,7 +224,7 @@ public class GameClasses {
             this.PlannedAttack = other.PlannedAttack;
             // this.id = UnitIdGenerator.generateId();
         }
-        
+
         public double getNextActionTime() {
             return this.NextActionTime;
         }

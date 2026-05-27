@@ -1,13 +1,11 @@
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.List;
 import java.util.PriorityQueue;
 
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.TextColor;
 
-import GameClasses.Effects;
 import GameClasses.GameClasses;
 import GameClasses.GameClasses.Entity;
 
@@ -44,8 +42,9 @@ public class Combat {
 
     public static void battle(Entity User, List<Entity> Enemies) throws IOException, InterruptedException {
         Main.scene = "Combat";
-        Saves.saveSave(Saves.currentFile, "eastern farms", Main.characterName, Globals.nemesisPercentage);
+        User.Stamina = User.MaxStamina;
         List<Entity> tempEnemies = new ArrayList<>(Enemies);
+        Saves.saveSave(Saves.currentFile, "eastern farms", Main.characterName, Globals.nemesisPercentage, Globals.money, Globals.progress);
         PriorityQueue<Entity> order = new PriorityQueue<>(java.util.Comparator
             .comparingDouble((Entity e) -> e.getNextActionTime())
             .thenComparingInt(e -> e.getID())
@@ -57,7 +56,6 @@ public class Combat {
 
         CombatHandler combatHandler = new CombatHandler() {
             //region Combat handler
-            @Override
             public void clearAlertPanel() throws IOException, InterruptedException {
                 List<String> wiper = new ArrayList<>();
                 for (int i = 0; i < 10; i++) {
@@ -106,7 +104,7 @@ public class Combat {
                 }
 
                 Main.formatter.printMulti(startRow, Main.formatter.connectAsciiArt(enemyArt), TextFormatter.PaddingAlignment.CENTER);
-                if (doTarget) {Main.formatter.printMultiIgnore(startRow, Main.formatter.connectAsciiArt(enemyArtBuffer), TextFormatter.PaddingAlignment.CENTER, TextColor.ANSI.RED_BRIGHT);}
+                if (doTarget) {Main.formatter.printMultiIgnore(startRow+(int)currEntity.getSkin().size()/2, Main.formatter.connectAsciiArt(enemyArtBuffer), TextFormatter.PaddingAlignment.CENTER, TextColor.ANSI.RED_BRIGHT);}
             }
 
             public void printParticipants(Entity currEntity) throws IOException, InterruptedException {
@@ -145,9 +143,10 @@ public class Combat {
 
                 Main.formatter.printMulti(getMenuRow()-1, Main.formatter.createBox(TextFormatter.getLongestString(options).length()+2, 6, List.of(""), TextFormatter.BorderStyle.NOTHING), TextFormatter.PaddingAlignment.LC);
                 choice = Main.formatter.printSelectionInBox(getMenuRow(), options, returnOptions, TextFormatter.PaddingAlignment.LC, TextFormatter.BorderStyle.ROUNDED);
+                Main.formatter.printMulti(getMenuRow()-1, Main.formatter.createBox(TextFormatter.getLongestString(options).length()+2, 6, List.of(""), TextFormatter.BorderStyle.NOTHING), TextFormatter.PaddingAlignment.LC);
                 return choice;
             }
-
+            
             @Override
             public GameClasses.Equipment chooseEquipment(Entity currEntity) throws IOException, InterruptedException {
                 List<String> options = new ArrayList<>();
@@ -158,9 +157,10 @@ public class Combat {
                     options.add(weapon.Name);
                     returnOptions.add(weapon);
                 }
-
+                
                 Main.formatter.printMulti(getMenuRow()-1, Main.formatter.createBox(TextFormatter.getLongestString(options).length()+2, 6, List.of(""), TextFormatter.BorderStyle.NOTHING), TextFormatter.PaddingAlignment.LC);
                 choice = Main.formatter.printEquipmentSelection(getMenuRow(), options, returnOptions, TextFormatter.PaddingAlignment.LC);
+                Main.formatter.printMulti(getMenuRow()-1, Main.formatter.createBox(TextFormatter.getLongestString(options).length()+2, 6, List.of(""), TextFormatter.BorderStyle.NOTHING), TextFormatter.PaddingAlignment.LC);
                 return choice;
             }
 
@@ -170,12 +170,18 @@ public class Combat {
                 Main.screen.refresh();
 
                 for (Entity entity : tempEnemies) {
+                    System.out.println(entity.Effects);
                     if (entity.Health<=0) {
-                        entity.Alive = false;
-                        entity.SkinPath = "ascii-art/death.txt";
-                        order.remove(entity);
+                        if (entity.getEffect("Taskmaster badge").count>0) {
+                            entity.getEffect("Taskmaster badge").affect(entity);
+                        } else {
+                            entity.Alive = false;
+                            entity.SkinPath = "ascii-art/death.txt";
+                            order.remove(entity);
+                        }
                     }
                 }
+                if (User.Health<=0) {User.Alive = false;}
 
                 List<List<String>> enemySkins = new ArrayList<>();
                 for (Entity entity : tempEnemies) {
@@ -212,8 +218,8 @@ public class Combat {
                 Main.formatter.printMulti(getInitiativeRow(), List.of(initiativeString.toString()), TextFormatter.PaddingAlignment.CENTER, TextFormatter.BorderStyle.ROUNDED, 0);
                 // System.out.println(initiativeString.toString());
                 
-                // TextFormatter.PaddingAlignment playerGuiAlignment = (User != currEntity) ? TextFormatter.PaddingAlignment.CENTER : TextFormatter.PaddingAlignment.RC;
-                TextFormatter.PaddingAlignment playerGuiAlignment = TextFormatter.PaddingAlignment.CENTER;
+                TextFormatter.PaddingAlignment playerGuiAlignment = (User != currEntity) ? TextFormatter.PaddingAlignment.CENTER : TextFormatter.PaddingAlignment.RC;
+                // TextFormatter.PaddingAlignment playerGuiAlignment = TextFormatter.PaddingAlignment.CENTER;
                 List<List<String>> playerGui = new ArrayList<>();
                 List<String> effectString = new ArrayList<>(List.of("Effects:"));
                 effectString.addAll(User.getEffectDisplay());
@@ -309,6 +315,7 @@ public class Combat {
                     }
                     case "action" -> {
                         String cAction = combatHandler.chooseAction(current);
+                        acting = false;
                         switch (cAction) {
                             case "block" -> {
                                 int roll = User.rollBlockDie();
@@ -321,17 +328,14 @@ public class Combat {
                                 Main.formatter.printSingle(getSubMenuRow(), User.Name+" replenished 2 stamina.", TextFormatter.PaddingAlignment.CENTER);
                                 Main.formatter.promptTextInput(getSubMenuRow()+1, TextFormatter.PaddingAlignment.CENTER, "Neat. [ENTER]");
                             }
-                            case "exit" -> {}
+                            case "exit" -> {acting = true;}
                         }
-                        acting = false;
                     }
                     case "equipment" -> {
                         User.EquippedWeapon = combatHandler.chooseEquipment(User);
-                        acting = false;
                     }
                     case "inspect" -> {
                         Main.formatter.printSingle(getSubMenuRow(), "Kukucs", TextFormatter.PaddingAlignment.CENTER);
-                        acting = false;
                     }
                 }
                 combatHandler.printParticipants(current, false);
@@ -344,11 +348,10 @@ public class Combat {
             Main.formatter.promptTextInput(getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, "Next [ENTER]");
 
             for (int i = 0; i < current.Effects.size(); i++) {
-                current.Effects.get(i).affect(current);
                 // System.out.println(e.Effects.get(i));
                 if (!current.Effects.get(i).infinite) {current.Effects.get(i).duration -= 1;}
                 // System.out.println(e.Effects.get(i));
-                if (current.Effects.get(i).duration<=0 || current.Effects.get(i).count<=0) {current.Effects.remove(i); i++;}
+                if (current.Effects.get(i).duration<=0 && !current.Effects.get(i).infinite) {current.Effects.remove(i); i++;}
             }
             // System.out.println("---");
 

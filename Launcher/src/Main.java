@@ -19,9 +19,8 @@ public class Main {
     public static SwingTerminalFrame terminal;
     public static Screen screen;
     public static TextGraphics tg;
-    public static String characterName = "Marcukaa";
-
     public static TextFormatter formatter;
+    public static String characterName = "Marcukaa";
 
     public static Screen createScreen(TerminalScreen terminal) throws IOException {
         terminal.startScreen();
@@ -46,6 +45,7 @@ public class Main {
         formatter = new TextFormatter(tg, screen.getTerminalSize().getColumns());
 
         //title screen with UI resize
+        // tg.setForegroundColor(TextColor.ANSI.MAGENTA_BRIGHT);
         SceneController.loadScene("Initialization");
     }
 

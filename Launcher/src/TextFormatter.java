@@ -52,7 +52,7 @@ public record TextFormatter(TextGraphics tg, int cols) {
             case LEFT -> 0;
             case LC -> ((cols / 3) - (line.length() / 2));
             case CENTER -> ((cols / 2) - (line.length() / 2));
-            case RC -> (cols-(cols / 3) - (line.length() / 2));
+            case RC -> ((cols / 5)*3 - (line.length() / 2));
             case RIGHT -> cols - line.length();
         };
     }
@@ -414,7 +414,7 @@ public record TextFormatter(TextGraphics tg, int cols) {
                     return returnOptions.get(selection);
                 }
                 case Escape -> {
-                    Saves.saveSave(Saves.currentFile, Main.scene, Main.characterName, Globals.nemesisPercentage);
+                    Saves.saveSave(Saves.currentFile, Main.scene, Main.characterName, Globals.nemesisPercentage, Globals.money, Globals.progress);
                     SceneController.loadScene("Main Menu");
                 }
             }
@@ -657,4 +657,3 @@ public record TextFormatter(TextGraphics tg, int cols) {
     }
     //endregion
 }
-
