@@ -19,7 +19,8 @@ public class CampaignHandler {
                 Entities.witch
             ),
             0,
-            1
+            1,
+            10
         );
         if (Globals.progress>0 && cProgress==0) {
             Main.screen.clear();
@@ -44,7 +45,8 @@ public class CampaignHandler {
                 Entities.spawn
             ),
             1,
-            2
+            2,
+            20
         );
         if (Globals.progress>1 && cProgress==1) {
             Main.screen.clear();
@@ -67,7 +69,8 @@ public class CampaignHandler {
                 Entities.geopolitanTaskmaster
             ),
             2,
-            2
+            2,
+            35
         );
         if (Globals.progress>2 && cProgress==2) {
             Main.screen.clear();

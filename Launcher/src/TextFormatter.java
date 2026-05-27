@@ -24,7 +24,7 @@ public record TextFormatter(TextGraphics tg, int cols) {
 
     //region enums and global variables
     public enum PaddingAlignment { //Alignment for where the text will be shown on the terminal screen
-        LEFT, LC, CENTER, RC, RIGHT
+        LEFT, LLC, LLC_special, LC, CENTER, RC, RRC, RIGHT
     }
 
     public enum TextAlignment { //Maybe I'll do this if we need to float text to the left or right
@@ -50,9 +50,12 @@ public record TextFormatter(TextGraphics tg, int cols) {
     public int getStartColumn(String line, PaddingAlignment paddingAlignment) {
         return switch (paddingAlignment) {
             case LEFT -> 0;
+            case LLC_special -> ((cols / 4));
+            case LLC -> ((cols / 5) - (line.length() / 2));
             case LC -> ((cols / 3) - (line.length() / 2));
             case CENTER -> ((cols / 2) - (line.length() / 2));
             case RC -> ((cols / 5)*3 - (line.length() / 2));
+            case RRC -> (cols-(cols / 3) - (line.length() / 2));
             case RIGHT -> cols - line.length();
         };
     }
@@ -222,6 +225,14 @@ public record TextFormatter(TextGraphics tg, int cols) {
         drawOptions(startRow, displayedSaveTexts, paddingAlignment, selection);
         Main.screen.refresh();
 
+        if (displayedSaveTexts.isEmpty()) {
+            alert(30, List.of("No saves found."));
+            SceneController.loadScene("Main menu");
+            Main.screen.clear();
+            Main.screen.refresh();
+            return;
+        }
+
         while (true) {
             KeyStroke key = Main.screen.readInput();
             if (key == null) continue;
@@ -249,7 +260,7 @@ public record TextFormatter(TextGraphics tg, int cols) {
         content.addAll(message);
         content = createBox(1, 1, content, BorderStyle.SINGLE);
         printMulti(startRow, content, PaddingAlignment.CENTER);
-        promptTextInput(startRow+content.size()-1, PaddingAlignment.CENTER, "[OK]");
+        confirmInput(startRow+content.size()-1, PaddingAlignment.CENTER, "[OK]");
         printMulti(startRow, createBox(getLongestElementLength(content).length(), content.size()+2, List.of(""), BorderStyle.NOTHING), PaddingAlignment.CENTER);
 
     }
@@ -328,6 +339,37 @@ public record TextFormatter(TextGraphics tg, int cols) {
 
     public GameClasses.Attack printAttackSelection(int startRow, List<String> initialOptions, List<GameClasses.Attack> returnOptions, PaddingAlignment paddingAlignment) throws IOException, InterruptedException {
         //This is the same as the one from before but it does not have a scene controller and returns an attack
+        List<String> options = new ArrayList<>(initialOptions);
+        int selection = 0;
+        int longest = getLongestString(options).length();
+        for (int i = 0; i < options.size(); i++) {
+            String option = options.get(i);
+            while (option.length()<longest) {
+                option += " ";
+            }
+            options.set(i, option);
+        }
+        printMulti(startRow-1, createBox(longest+2, options.size(), List.of(), BorderStyle.ROUNDED), paddingAlignment);
+        drawOptions(startRow, options, paddingAlignment, selection);
+        Main.screen.refresh();
+
+        while (true) {
+            KeyStroke key = Main.screen.readInput();
+            if (key == null) continue;
+            switch (key.getKeyType()) {
+                case ArrowUp -> selection = Math.max(0, selection - 1);
+                case ArrowDown -> selection = Math.min(returnOptions.size()-1 , selection+1);
+                case Enter -> {
+                    return returnOptions.get(selection);
+                }
+            }
+            drawOptions(startRow, options, paddingAlignment, selection);
+            Main.screen.refresh();
+        }
+    }
+    
+    public GameClasses.Product printProductSelection(int startRow, List<String> initialOptions, List<GameClasses.Product> returnOptions, PaddingAlignment paddingAlignment) throws IOException, InterruptedException {
+        //This is the same as the one from before but it does not have a scene controller and returns a product
         List<String> options = new ArrayList<>(initialOptions);
         int selection = 0;
         int longest = getLongestString(options).length();
@@ -459,39 +501,45 @@ public record TextFormatter(TextGraphics tg, int cols) {
         }
     }
 
-    public String promptTextInput(int row, PaddingAlignment paddingAlignment, String prompt) throws IOException, InterruptedException {
+    public void confirmInput(int row, PaddingAlignment paddingAlignment, String prompt) throws IOException, InterruptedException {
+        confirmInput(true, row, paddingAlignment, prompt);
+    }
+
+    public void confirmInput(boolean doClear, int row, PaddingAlignment paddingAlignment, String prompt) throws IOException, InterruptedException {
         StringBuilder input = new StringBuilder();
         tg.putString(getStartColumn(prompt, paddingAlignment), row, prompt);
         Main.screen.refresh();
         while (true) {
             Main.screen.refresh();
             // String cleared = " ".repeat(prompt.concat(input.toString()).length() + prompt.length());
-            String cleared = " ".repeat(cols);
-            tg.putString(getStartColumn(cleared, paddingAlignment), row, cleared); // clear old text
             // draw current input centered
             KeyStroke key = Main.screen.readInput();
             if (key == null) continue;
             switch (key.getKeyType()) {
-                case Character -> {
-                    if (!key.getCharacter().equals(' ')) {
-                        input.append(key.getCharacter());
-                    }
-                }
-                case Backspace -> {
-                    if (!input.isEmpty()) {
-                        input.deleteCharAt(input.length() - 1);
-                    }
-                }
+                // case Character -> {
+                //     if (!key.getCharacter().equals(' ')) {
+                    //         input.append(key.getCharacter());
+                //     }
+                // }
+                // case Backspace -> {
+                    //     if (!input.isEmpty()) {
+                        //         input.deleteCharAt(input.length() - 1);
+                //     }
+                // }
                 case Enter -> {
-                    return input.toString();
+                    if (doClear) {
+                        String cleared = " ".repeat(cols);
+                        tg.putString(getStartColumn(cleared, paddingAlignment), row, cleared); // clear old text
+                    }
+                    return;
                 } // null signals canceled input
                 default -> {
                 }
             }
-            String line = prompt.concat(input.toString());
-            // String cleared = " ".repeat(line.length() + 1);
-            tg.putString(getStartColumn(cleared, paddingAlignment), row, cleared); // clear old text
-            tg.putString(getStartColumn(prompt, paddingAlignment), row, line);
+            // String line = prompt.concat(input.toString());
+            // // String cleared = " ".repeat(line.length() + 1);
+            // tg.putString(getStartColumn(cleared, paddingAlignment), row, cleared); // clear old text
+            // tg.putString(getStartColumn(prompt, paddingAlignment), row, line);
         }
     }
 

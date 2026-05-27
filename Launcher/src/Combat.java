@@ -130,7 +130,7 @@ public class Combat {
                 do {
                     choice = Main.formatter.printAttackSelection(getMenuRow(), options, returnOptions, TextFormatter.PaddingAlignment.LC);
                     if (choice.Cost>currEntity.Stamina) {Main.formatter.alert(getSubMenuRow(), List.of("Not enough stamina."));}
-                } while (choice.Cost>currEntity.Stamina);
+                } while (choice.Cost>currEntity.Stamina && choice.Cost!=0);
                 Main.formatter.printMulti(getMenuRow()-1, Main.formatter.createBox(TextFormatter.getLongestString(options).length()+2, 6, List.of(""), TextFormatter.BorderStyle.NOTHING), TextFormatter.PaddingAlignment.LC);
                 currEntity.Stamina -= choice.Cost;
                 return choice;
@@ -138,7 +138,7 @@ public class Combat {
 
             @Override
             public String chooseAction(Entity currEntity) throws IOException, InterruptedException {
-                List<String> options = List.of("Exit", "Block ["+(2+currEntity.BlockMod)+"~"+(4+currEntity.BlockMod)+"]", "Respire [2]");
+                List<String> options = List.of("Exit", "Block ["+(2+currEntity.BlockMod+currEntity.getEffect("Riot shield").count)+"~"+(4+currEntity.BlockMod+currEntity.getEffect("Riot shield").count)+"]", "Respire [2]");
                 List<String> returnOptions = List.of("exit", "block", "respire");
                 String choice;
 
@@ -262,12 +262,12 @@ public class Combat {
                 Entity target = User;
                 current.consumeStamina(current.PlannedAttack.Cost);
                 Main.formatter.printSingle(getSubMenuRow(), current.Name+" intends to use "+current.PlannedAttack.Name+" ("+current.PlannedAttack.Chances+" rolls)", TextFormatter.PaddingAlignment.CENTER);
-                Main.formatter.promptTextInput(getSubMenuRow()+1, TextFormatter.PaddingAlignment.CENTER, "Proceed [ENTER]");
+                Main.formatter.confirmInput(getSubMenuRow()+1, TextFormatter.PaddingAlignment.CENTER, "Proceed [ENTER]");
                 combatHandler.clearAlertPanel();
                 int roll = current.PlannedAttack.roll(current.getStrength());
                 for (int i = 0; i < current.PlannedAttack.Chances; i++) {
                     Main.formatter.printSingle(getSubMenuRow()+i, target.damageSelf(roll), TextFormatter.PaddingAlignment.CENTER);
-                    Main.formatter.promptTextInput(getSubMenuRow()+1+i, TextFormatter.PaddingAlignment.CENTER, "Understood [ENTER]");                    
+                    Main.formatter.confirmInput(getSubMenuRow()+1+i, TextFormatter.PaddingAlignment.CENTER, "Understood [ENTER]");                    
                 }
                 combatHandler.clearAlertPanel();
                 current.PlannedAttack.affect(current, target);
@@ -296,11 +296,11 @@ public class Combat {
                                 case Enter -> {
                                     combatHandler.clearAlertPanel();
                                     User.consumeStamina(cAttack.Cost);
-                                    Main.formatter.promptTextInput(getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, "Roll for damage [ENTER]");
+                                    Main.formatter.confirmInput(getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, "Roll for damage [ENTER]");
                                     int roll = cAttack.roll(current.getStrength());
                                     Main.formatter.printSingle(getSubMenuRow(), "Rolled: "+roll, TextFormatter.PaddingAlignment.CENTER);
                                     Main.formatter.printSingle(getSubMenuRow()+1, target.damageSelf(roll), TextFormatter.PaddingAlignment.CENTER);
-                                    Main.formatter.promptTextInput(getSubMenuRow()+2, TextFormatter.PaddingAlignment.CENTER, "Understood [ENTER]");
+                                    Main.formatter.confirmInput(getSubMenuRow()+2, TextFormatter.PaddingAlignment.CENTER, "Understood [ENTER]");
                                     combatHandler.clearAlertPanel();
                                     cAttack.affect(User, target);
                                     acting = false;
@@ -322,18 +322,19 @@ public class Combat {
                                 int roll = User.rollBlockDie();
                                 User.applyEffect(Effects.block, roll, 2, false);
                                 Main.formatter.printSingle(getSubMenuRow(), User.Name+" gained "+roll+" block.", TextFormatter.PaddingAlignment.CENTER);
-                                Main.formatter.promptTextInput(getSubMenuRow()+1, TextFormatter.PaddingAlignment.CENTER, "Neat. [ENTER]");
+                                Main.formatter.confirmInput(getSubMenuRow()+1, TextFormatter.PaddingAlignment.CENTER, "Neat. [ENTER]");
                             }
                             case "respire" -> {
                                 User.Stamina = Math.min(User.MaxStamina, User.Stamina += 2);
                                 Main.formatter.printSingle(getSubMenuRow(), User.Name+" replenished 2 stamina.", TextFormatter.PaddingAlignment.CENTER);
-                                Main.formatter.promptTextInput(getSubMenuRow()+1, TextFormatter.PaddingAlignment.CENTER, "Neat. [ENTER]");
+                                Main.formatter.confirmInput(getSubMenuRow()+1, TextFormatter.PaddingAlignment.CENTER, "Neat. [ENTER]");
                             }
                             case "exit" -> {acting = true;}
                         }
                     }
                     case "equipment" -> {
                         User.EquippedWeapon = combatHandler.chooseEquipment(User);
+                        combatHandler.visualise(current);
                     }
                     case "inspect" -> {
                         combatHandler.visualise(current);
@@ -372,7 +373,7 @@ public class Combat {
                                     Main.screen.clear();
                                     Main.screen.refresh();
                                     Main.formatter.printMulti(startRow, enemyInfo, TextFormatter.PaddingAlignment.CENTER);
-                                    Main.formatter.promptTextInput(startRow+enemyInfo.size()+2, TextFormatter.PaddingAlignment.CENTER, "Interesting [ENTER]");
+                                    Main.formatter.confirmInput(startRow+enemyInfo.size()+2, TextFormatter.PaddingAlignment.CENTER, "Interesting [ENTER]");
                                     targetting = false;
                                 }
                                 case Backspace -> {
@@ -392,15 +393,14 @@ public class Combat {
             current.regainStamina();
             
             combatHandler.visualise(current);
-            Main.formatter.promptTextInput(getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, "Next [ENTER]");
+            Main.formatter.confirmInput(getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, "Next [ENTER]");
 
             for (int i = 0; i < current.Effects.size(); i++) {
-                current.Effects.get(i).affect(current);
-                if (i < current.Effects.size()) {break;}
                 // System.out.println(e.Effects.get(i));
                 if (!current.Effects.get(i).infinite) {current.Effects.get(i).duration -= 1;}
                 // System.out.println(e.Effects.get(i));
                 if (current.Effects.get(i).duration<=0 && !current.Effects.get(i).infinite) {current.Effects.remove(i); i++;}
+                else {current.Effects.get(i).affect(current);}
             }
             // System.out.println("---");
 

@@ -5,7 +5,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -98,23 +97,41 @@ public class GameClasses {
         }
     }
     
-    public static class Passive {
-        public String Name;
-        public List<String> Desc;
-        public String EffectScript;
-        public int CallingOrder;
-        public int Clock;
+    // public static class Passive {
+    //     public String Name;
+    //     public List<String> Desc;
+    //     public String EffectScript;
+    //     public int CallingOrder;
+    //     public int Clock;
 
-        public Passive(String name, List<String> desc, String effectScript, int callingOrder) {
+    //     public Passive(String name, List<String> desc, String effectScript, int callingOrder) {
+    //         this.Name = name;
+    //         this.Desc = desc;
+    //         this.EffectScript = effectScript;
+    //         this.CallingOrder = callingOrder;
+    //         this.Clock = 0;
+    //     }
+
+    //     public void trigger(Entity affectedEntity, Map<String, Object> locals) {
+    //         throw new UnsupportedOperationException("Passive scripts not implemented in Java port.");
+    //     }
+    // }
+
+    public static class Product {
+        public String Name;
+        public String Description;
+        public int Price;
+        public Consumer<Entity> Effect;
+
+        public Product(String name, String desc, int price, Consumer<Entity> effect) {
             this.Name = name;
-            this.Desc = desc;
-            this.EffectScript = effectScript;
-            this.CallingOrder = callingOrder;
-            this.Clock = 0;
+            this.Description = desc;
+            this.Price = price;
+            this.Effect = effect;
         }
 
-        public void trigger(Entity affectedEntity, Map<String, Object> locals) {
-            throw new UnsupportedOperationException("Passive scripts not implemented in Java port.");
+        public void use(Entity entity) {
+            this.Effect.accept(entity);
         }
     }
     
@@ -149,7 +166,6 @@ public class GameClasses {
         public int Speed; // Innitiative order
         public String Name;
         public List<StatusEffect> Effects;
-        public List<Passive> Passives;
         public Attack PlannedAttack;
         public String SkinPath;
         public Equipment EquippedWeapon;
@@ -173,7 +189,6 @@ public class GameClasses {
             this.EquippedWeapon = gear.get(0);
             this.PlannedAttack = plan();
             this.Description = description;
-            this.Passives = new ArrayList<>();
             this.Clock = 0;
             this.Alive = true;
             this.NextActionTime = 0d;
@@ -197,7 +212,6 @@ public class GameClasses {
             this.EquippedWeapon = other.EquippedWeapon;
             this.Description = other.Description;
             this.Effects = other.Effects;
-            this.Passives = other.Passives;
             this.Clock = other.Clock;
             this.Alive = other.Alive;
             this.NextActionTime = other.NextActionTime;
@@ -219,7 +233,6 @@ public class GameClasses {
             this.EquippedWeapon = other.EquippedWeapon;
             this.Description = other.Description;
             this.Effects = new ArrayList<>();
-            this.Passives = new ArrayList<>();
             this.Clock = other.Clock;
             this.Alive = other.Alive;
             this.NextActionTime = other.NextActionTime;
@@ -238,7 +251,7 @@ public class GameClasses {
         }
 
         public int rollBlockDie() {
-            return randInt(2, 6)+BlockMod;
+            return randInt(2, 6)+BlockMod+this.getEffect("Riot shield").count;
         }
 
         public Attack plan() {
@@ -311,8 +324,7 @@ public class GameClasses {
                 if (infinite) {
                     effect.infinite = true;
                 }
-            }
-            else {
+            } else {
                 thisEffect.count = Math.max(count, thisEffect.count);
                 thisEffect.duration = Math.max(duration, thisEffect.duration);
                 thisEffect.infinite = infinite;

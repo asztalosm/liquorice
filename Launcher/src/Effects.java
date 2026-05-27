@@ -25,4 +25,17 @@ public class Effects {
             }
         } catch (IOException | InterruptedException e) {}
     }); // unique
+    public static GameClasses.StatusEffect medkit = new GameClasses.StatusEffect("Medkit", (entity) -> {
+        try {
+            if (entity.Health<=(int)(entity.Health/2)) {               
+                Main.formatter.alert(Combat.getInitiativeRow()-10, List.of(
+                    entity.Name+"used medkit.",
+                    "Full health restored"
+                ));
+                entity.Health += entity.MaxHealth;
+            }
+        } catch (IOException | InterruptedException e) {}
+    }); // unique
+    public static GameClasses.StatusEffect riotShield = new GameClasses.StatusEffect("Riot shield", (entity) -> {}); // block power boost
+    public static GameClasses.StatusEffect overheat = new GameClasses.StatusEffect("Overheat", (entity) -> {}); // unique
 }

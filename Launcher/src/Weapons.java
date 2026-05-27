@@ -39,7 +39,7 @@ public class Weapons {
                         attacker.getEffect("Ammo").count--;
                         Main.formatter.printSingle(Combat.getSubMenuRow(), "*BOOM*", TextFormatter.PaddingAlignment.CENTER);
                     } else {
-                        Main.formatter.promptTextInput(Combat.getSubMenuRow()+1, TextFormatter.PaddingAlignment.CENTER, attacker.Name+" lacks ammunition."+" [ENTER]");
+                        Main.formatter.confirmInput(Combat.getSubMenuRow()+1, TextFormatter.PaddingAlignment.CENTER, attacker.Name+" lacks ammunition."+" [ENTER]");
                     }
                 } catch (IOException | InterruptedException e2) {}
             },
@@ -51,8 +51,8 @@ public class Weapons {
             "Repurpose scrap",
             (attacker, target) -> {
                 try {
-                    Main.formatter.promptTextInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, target.applyEffect(Effects.vulnerability, 1, 1, true)+" [ENTER]");
-                    Main.formatter.promptTextInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.ammo, 3, 1, true)+" [ENTER]");
+                    Main.formatter.confirmInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, target.applyEffect(Effects.vulnerability, 1, 1, true)+" [ENTER]");
+                    Main.formatter.confirmInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.ammo, 3, 1, true)+" [ENTER]");
                 } catch (IOException | InterruptedException e2) {}
             },
             false,
@@ -71,9 +71,9 @@ public class Weapons {
                         target.consumeStamina(4);
                         attacker.getEffect("Ammo").count--;
                         Main.formatter.printSingle(Combat.getSubMenuRow(), "A string of light punctures your body and soul.", TextFormatter.PaddingAlignment.CENTER);
-                        Main.formatter.promptTextInput(Combat.getSubMenuRow()+1, TextFormatter.PaddingAlignment.CENTER, target.Name+" lost 4 stamina."+" [ENTER]");
+                        Main.formatter.confirmInput(Combat.getSubMenuRow()+1, TextFormatter.PaddingAlignment.CENTER, target.Name+" lost 4 stamina."+" [ENTER]");
                     } else {
-                        Main.formatter.promptTextInput(Combat.getSubMenuRow()+1, TextFormatter.PaddingAlignment.CENTER, attacker.Name+" lacks ammunition."+" [ENTER]");
+                        Main.formatter.confirmInput(Combat.getSubMenuRow()+1, TextFormatter.PaddingAlignment.CENTER, attacker.Name+" lacks ammunition."+" [ENTER]");
                     }
                 } catch (IOException | InterruptedException e2) {}
             },
@@ -85,7 +85,7 @@ public class Weapons {
             "Reload",
             (attacker, target) -> {
                 try {
-                    Main.formatter.promptTextInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.ammo, 3, 1, true)+" [ENTER]");
+                    Main.formatter.confirmInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.ammo, 3, 1, true)+" [ENTER]");
                 } catch (IOException | InterruptedException e2) {}
             },
             false,
@@ -100,7 +100,7 @@ public class Weapons {
             "Taste",
             (attacker, target) -> {
                 try {
-                    Main.formatter.promptTextInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, target.applyEffect(Effects.weakness, 2, 2, false)+" [ENTER]");
+                    Main.formatter.confirmInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, target.applyEffect(Effects.weakness, 2, 2, false)+" [ENTER]");
                 } catch (IOException | InterruptedException e2) {}
             },
             false,
@@ -118,7 +118,7 @@ public class Weapons {
             "Stare",
             (attacker, target) -> {
                 try {
-                    Main.formatter.promptTextInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, target.applyEffect(Effects.slowness, 2, 3, false)+" [ENTER]");
+                    Main.formatter.confirmInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, target.applyEffect(Effects.slowness, 2, 3, false)+" [ENTER]");
                 } catch (IOException | InterruptedException e) {}
             },
             false,
@@ -133,7 +133,7 @@ public class Weapons {
             "Bash",
             (attacker, target) -> {
                 try {
-                    Main.formatter.promptTextInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, target.applyEffect(Effects.vulnerability, 1, 2, false)+" [ENTER]");
+                    Main.formatter.confirmInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, target.applyEffect(Effects.vulnerability, 1, 2, false)+" [ENTER]");
                 } catch (IOException | InterruptedException e2) {}
             },
             false,
@@ -144,8 +144,8 @@ public class Weapons {
             "Shield",
             (attacker, target) -> {
                 try {
-                    Main.formatter.promptTextInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.slowness, 1, 3, false)+" [ENTER]");
-                    Main.formatter.promptTextInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.sturdyness, 2, 3, false)+" [ENTER]");
+                    Main.formatter.confirmInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.slowness, 1, 3, false)+" [ENTER]");
+                    Main.formatter.confirmInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.sturdyness, 2, 3, false)+" [ENTER]");
                 } catch (IOException | InterruptedException e) {}
             },
             false,
@@ -156,7 +156,7 @@ public class Weapons {
             "Synchronize",
             (attacker, target) -> {
                 try {
-                    Main.formatter.promptTextInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.relentlessness, 2, 1, false)+" [ENTER]");
+                    Main.formatter.confirmInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.relentlessness, 2, 1, false)+" [ENTER]");
                 } catch (IOException | InterruptedException e) {}
             },
             false,
@@ -171,7 +171,7 @@ public class Weapons {
             "Rib breaker",
             (attacker, target) -> {
                 try {
-                    Main.formatter.promptTextInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, target.applyEffect(Effects.vulnerability, 2, 2, false)+" [ENTER]");
+                    Main.formatter.confirmInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, target.applyEffect(Effects.vulnerability, 2, 2, false)+" [ENTER]");
                 } catch (IOException | InterruptedException e2) {}
             },
             false,
@@ -182,7 +182,7 @@ public class Weapons {
             "Multi Block",
             (attacker, target) -> {
                 try {
-                    Main.formatter.promptTextInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.sturdyness, 3, 3, false)+" [ENTER]");
+                    Main.formatter.confirmInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.sturdyness, 3, 3, false)+" [ENTER]");
                 } catch (IOException | InterruptedException e) {}
             },
             false,
@@ -193,7 +193,7 @@ public class Weapons {
             "Synchronize",
             (attacker, target) -> {
                 try {
-                    Main.formatter.promptTextInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, target.applyEffect(Effects.exhaustion, 2, 1, false)+" [ENTER]");
+                    Main.formatter.confirmInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, target.applyEffect(Effects.exhaustion, 2, 1, false)+" [ENTER]");
                 } catch (IOException | InterruptedException e) {}
             },
             false,
@@ -208,8 +208,8 @@ public class Weapons {
             "Charge",
             (attacker, target) -> {
                 try {
-                    Main.formatter.promptTextInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.haste, 2, 2, false)+" [ENTER]");
-                    Main.formatter.promptTextInput(Combat.getSubMenuRow()+1, TextFormatter.PaddingAlignment.CENTER, target.applyEffect(Effects.weakness, 2, 2, false)+" [ENTER]");
+                    Main.formatter.confirmInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.haste, 2, 2, false)+" [ENTER]");
+                    Main.formatter.confirmInput(Combat.getSubMenuRow()+1, TextFormatter.PaddingAlignment.CENTER, target.applyEffect(Effects.weakness, 2, 2, false)+" [ENTER]");
                 } catch (IOException | InterruptedException e2) {}
             },
             false,
@@ -220,8 +220,8 @@ public class Weapons {
             "Reinforce",
             (attacker, target) -> {
                 try {
-                    Main.formatter.promptTextInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.strength, 3, 1, false)+" [ENTER]");
-                    Main.formatter.promptTextInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.sturdyness, 3, 3, false)+" [ENTER]");
+                    Main.formatter.confirmInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.strength, 3, 1, false)+" [ENTER]");
+                    Main.formatter.confirmInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.sturdyness, 3, 3, false)+" [ENTER]");
                 } catch (IOException | InterruptedException e) {}
             },
             false,
@@ -233,8 +233,8 @@ public class Weapons {
             (attacker, target) -> {
                 try {
                     Main.formatter.alert(Combat.getSubMenuRow(), List.of("The particles of "+attacker.Name+" started realigning!", attacker.Name+" became vulnerable!"));
-                    Main.formatter.promptTextInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.vulnerability, 5, 1, false)+" [ENTER]");
-                    Main.formatter.promptTextInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.relentlessness, 2, 3, false)+" [ENTER]");
+                    Main.formatter.confirmInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.vulnerability, 5, 1, false)+" [ENTER]");
+                    Main.formatter.confirmInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.relentlessness, 2, 3, false)+" [ENTER]");
                 } catch (IOException | InterruptedException e) {}
             },
             false,
@@ -256,7 +256,7 @@ public class Weapons {
             "Chant and slash",
             (attacker, target) -> {
                 try {
-                    Main.formatter.promptTextInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.strength, 1, 4, false)+" [ENTER]");
+                    Main.formatter.confirmInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.strength, 1, 4, false)+" [ENTER]");
                 } catch (IOException | InterruptedException e2) {}
             },
             false,
@@ -296,7 +296,7 @@ public class Weapons {
                         attacker.getEffect("Ammo").count -= 2;
                         Main.formatter.printSingle(Combat.getSubMenuRow(), "*BOOM*", TextFormatter.PaddingAlignment.CENTER);
                     } else {
-                        Main.formatter.promptTextInput(Combat.getSubMenuRow()+1, TextFormatter.PaddingAlignment.CENTER, attacker.Name+" lacks ammunition."+" [ENTER]");
+                        Main.formatter.confirmInput(Combat.getSubMenuRow()+1, TextFormatter.PaddingAlignment.CENTER, attacker.Name+" lacks ammunition."+" [ENTER]");
                     }
                 } catch (IOException | InterruptedException e2) {}
             },
@@ -309,8 +309,8 @@ public class Weapons {
             (attacker, target) -> {
                 try {
                     attacker.Stamina = attacker.MaxStamina;
-                    Main.formatter.promptTextInput(Combat.getSubMenuRow()+1, TextFormatter.PaddingAlignment.CENTER, attacker.Name+" replenished all stamina."+" [ENTER]");
-                    Main.formatter.promptTextInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.ammo, 5, 1, true)+" [ENTER]");
+                    Main.formatter.confirmInput(Combat.getSubMenuRow()+1, TextFormatter.PaddingAlignment.CENTER, attacker.Name+" replenished all stamina."+" [ENTER]");
+                    Main.formatter.confirmInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.ammo, 5, 1, true)+" [ENTER]");
                 } catch (IOException | InterruptedException e3) {}
             },
             false,
@@ -321,7 +321,7 @@ public class Weapons {
             "Accellerate",
             (attacker, target) -> {
                 try {
-                    Main.formatter.promptTextInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.haste, attacker.getEffect("Hatse").count+2, 1, true)+" [ENTER]");
+                    Main.formatter.confirmInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.haste, attacker.getEffect("Hatse").count+2, 1, true)+" [ENTER]");
                 } catch (IOException | InterruptedException e3) {}
             },
             false,
@@ -329,8 +329,6 @@ public class Weapons {
             0,
             5)
     );
-    
-    //region PLAYER WEAPONS
 
     public static GameClasses.Equipment Fists = new GameClasses.Equipment(
         "Fists",
@@ -345,7 +343,7 @@ public class Weapons {
             "Block",
             (attacker, target) -> {
                 try {
-                    Main.formatter.promptTextInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.sturdyness, 2, 2, false)+" [ENTER]");
+                    Main.formatter.confirmInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.sturdyness, 2, 2, false)+" [ENTER]");
                 } catch (IOException | InterruptedException e1) {}
             },
             false,
@@ -374,7 +372,7 @@ public class Weapons {
             "Bait",
             (attacker, target) -> {
                 try {
-                    Main.formatter.promptTextInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, target.applyEffect(Effects.slowness, 2, 3, false)+" [ENTER]");
+                    Main.formatter.confirmInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, target.applyEffect(Effects.slowness, 2, 3, false)+" [ENTER]");
                 } catch (IOException | InterruptedException e) {}
             },
             false,
@@ -394,7 +392,7 @@ public class Weapons {
                         attacker.getEffect("Ammo").count--;
                         Main.formatter.printSingle(Combat.getSubMenuRow(), "*BOOM*", TextFormatter.PaddingAlignment.CENTER);
                     } else {
-                        Main.formatter.promptTextInput(Combat.getSubMenuRow()+1, TextFormatter.PaddingAlignment.CENTER, attacker.Name+" lacks ammunition."+" [ENTER]");
+                        Main.formatter.confirmInput(Combat.getSubMenuRow()+1, TextFormatter.PaddingAlignment.CENTER, attacker.Name+" lacks ammunition."+" [ENTER]");
                     }
                 } catch (IOException | InterruptedException e2) {}
             },
@@ -406,7 +404,7 @@ public class Weapons {
             "Reload",
             (attacker, target) -> {
                 try {
-                    Main.formatter.promptTextInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.ammo, 3, 1, true)+" [ENTER]");
+                    Main.formatter.confirmInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.ammo, 3, 1, true)+" [ENTER]");
                 } catch (IOException | InterruptedException e2) {}
             },
             false,
@@ -428,7 +426,7 @@ public class Weapons {
             "Chant and slash",
             (attacker, target) -> {
                 try {
-                    Main.formatter.promptTextInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.strength, 2, 1, false)+" [ENTER]");
+                    Main.formatter.confirmInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.strength, 2, 1, false)+" [ENTER]");
                 } catch (IOException | InterruptedException e2) {}
             },
             false,
@@ -441,12 +439,138 @@ public class Weapons {
                 try {
                     Main.formatter.alert(Combat.getSubMenuRow(), List.of("The knife sinks into "+attacker.Name+"'s left thigh.", attacker.Name+" has suffered 1 damage due to blood loss."));
                     attacker.Health -= 1;
-                    Main.formatter.promptTextInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.strength, 3, 2, false)+" [ENTER]");
+                    Main.formatter.confirmInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.strength, 3, 2, false)+" [ENTER]");
                 } catch (IOException | InterruptedException e3) {}
             },
             false,
             new int[]{0, 0},
             0,
             1)
+    );
+
+    // region PATENT WEAPONS
+    public static GameClasses.Equipment shotgun = new GameClasses.Equipment(
+        "Coolins&Coolinson Lever Action Shotgun",
+        new GameClasses.Attack(
+            "Fire",
+            (attacker, target) -> {
+                try {
+                    if (attacker.getEffect("Ammo").count>0) {
+                        target.damageSelf(3*attacker.getEffect("Ammo").count);
+                        attacker.getEffect("Ammo").count = 0;
+                        Main.formatter.printSingle(Combat.getSubMenuRow(), "*BANG*", TextFormatter.PaddingAlignment.CENTER);
+                    } else {
+                        Main.formatter.confirmInput(Combat.getSubMenuRow()+1, TextFormatter.PaddingAlignment.CENTER, attacker.Name+" lacks ammunition."+" [ENTER]");
+                    }
+                } catch (IOException | InterruptedException e2) {}
+            },
+            false,
+            new int[]{0, 0},
+            1,
+            3),
+        new GameClasses.Attack(
+            "Reload",
+            (attacker, target) -> {
+                try {
+                    Main.formatter.confirmInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.ammo, 3, 1, true)+" [ENTER]");
+                } catch (IOException | InterruptedException e2) {}
+            },
+            false,
+            new int[]{3, 4},
+            1,
+            2)
+    );
+
+    public static GameClasses.Equipment pipe = new GameClasses.Equipment(
+        "Dr. Catsworth's Pipe of Madness",
+        new GameClasses.Attack(
+            "Suffocating fumes",
+            (attacker, target) -> {
+                try {
+                    Main.formatter.confirmInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, target.applyEffect(Effects.slowness, 2, 2, false)+" [ENTER]");
+                    Main.formatter.confirmInput(Combat.getSubMenuRow()+1, TextFormatter.PaddingAlignment.CENTER, target.applyEffect(Effects.weakness, 2, 2, false)+" [ENTER]");
+                } catch (IOException | InterruptedException e2) {}
+            },
+            false,
+            new int[]{0, 0},
+            1,
+            4),
+        new GameClasses.Attack(
+            "Neurotoxic fumes",
+            (attacker, target) -> {
+                try {
+                    Main.formatter.confirmInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, target.applyEffect(Effects.vulnerability, 2, 2, false)+" [ENTER]");
+                } catch (IOException | InterruptedException e2) {}
+            },
+            false,
+            new int[]{4, 5},
+            1,
+            4),
+        new GameClasses.Attack(
+            "Remedy",
+            (attacker, target) -> {
+                try {
+                    Main.formatter.confirmInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.sturdyness, 2, 2, false)+" [ENTER]");
+                } catch (IOException | InterruptedException e2) {}
+            },
+            false,
+            new int[]{1, 3},
+            1,
+            2)
+    );
+
+    public static GameClasses.Equipment deathray = new GameClasses.Equipment(
+        "Professor Carlstrumm's Deathray",
+        new GameClasses.Attack(
+            "FIRE",
+            (attacker, target) -> {
+                try {
+                    if (attacker.getEffect("Overheat").count<1) {
+                        attacker.applyEffect(Effects.overheat, 1, 1, true);
+                        target.Endurance -= 5;
+                        Main.formatter.alert(Combat.getSubMenuRow(), List.of("The deathray had molten any sort of protective gear "+target.Name+" might have had.", target.Name+"'s Endurance was reduced by 5!"));
+                    } else {
+                        Main.formatter.alert(Combat.getSubMenuRow(), List.of("The deathray is no longer usable."));
+                    }
+                } catch (IOException | InterruptedException e2) {}
+            },
+            false,
+            new int[]{8, 12},
+            1,
+            1)
+    );
+
+    public static GameClasses.Equipment exoclaws = new GameClasses.Equipment(
+        "McGurrigh's Fatal Exoclaws",
+        new GameClasses.Attack(
+            "Claw",
+            (attacker, target) -> {},
+            false,
+            new int[]{5, 7},
+            2,
+            3),
+        new GameClasses.Attack(
+            "Drive",
+            (attacker, target) -> {
+                try {
+                    Main.formatter.confirmInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.vulnerability, 2, 2, false)+" [ENTER]");
+                } catch (IOException | InterruptedException e1) {}
+            },
+            false,
+            new int[]{3, 8},
+            2,
+            2),
+        new GameClasses.Attack(
+            "Brace",
+            (attacker, target) -> {
+                try {
+                    Main.formatter.confirmInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.sturdyness, 1, 1, false)+" [ENTER]");
+                    Main.formatter.confirmInput(Combat.getSubMenuRow()+1, TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.block, 6, 1, false)+" [ENTER]");
+                } catch (IOException | InterruptedException e1) {}
+            },
+            false,
+            new int[]{1, 2},
+            1,
+            0)
     );
 }

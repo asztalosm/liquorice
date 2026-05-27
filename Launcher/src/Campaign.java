@@ -27,8 +27,16 @@ import java.util.List;
 import java.util.ArrayList;
 
 import GameClasses.GameClasses;
+import GameClasses.GameClasses.Product;
 
 public class Campaign {
+
+     public static int perkRow = 20;
+
+     public static int getPerkRow() {
+          return perkRow++;
+     }
+
      public static void CampaignSelector() throws IOException, InterruptedException {
           Saves.saveSave(Saves.currentFile, "eastern farms", Main.characterName, Globals.nemesisPercentage, Globals.money, Globals.progress);
           Main.scene = "Campaign selector";
@@ -61,6 +69,44 @@ public class Campaign {
           Main.formatter.printSelectionMultiLine(36, List.of("Northern farms", "Eastern farms", "Western farms", " [Exit]  "), List.of("Northern farms", "Eastern farms", "Western farms", "Main menu"), TextFormatter.PaddingAlignment.CENTER);
      }
 
+     public static List<Product> shop() throws IOException, InterruptedException {
+          List<GameClasses.Product> cart = new ArrayList<>();
+          List<GameClasses.Product> productChoices = new ArrayList<>(List.of(Market.exit));
+          List<String> productOptions = new ArrayList<>(List.of("Exit"));
+          List<String> productDescs = new ArrayList<>(List.of("Descriptions:"));
+          boolean purchasing = true;
+
+          for (GameClasses.Product product : Market.products) {
+               productOptions.add("[$"+product.Price+"] "+product.Name);
+               productChoices.add(product);
+               productDescs.add("- "+product.Description);
+          }
+          
+          GameClasses.Product currentItem;
+          while (purchasing) { 
+               Main.screen.clear();
+               Main.screen.refresh();
+               Main.formatter.printMulti(0, Main.formatter.loadArt("ascii-art/shop.txt"), TextFormatter.PaddingAlignment.LLC);
+               Main.formatter.printMulti(5, Main.formatter.loadArt("ascii-art/shopkeeper.txt"), TextFormatter.PaddingAlignment.RRC);
+               Main.formatter.printMulti(15, Main.formatter.createBox(1, 1, List.of("Money: $"+Globals.money), TextFormatter.BorderStyle.DOUBLE), TextFormatter.PaddingAlignment.LLC);
+               Main.formatter.printMulti(39, Main.formatter.createBox(1, 1, productDescs, TextFormatter.BorderStyle.NOTHING), TextFormatter.PaddingAlignment.RRC);
+               currentItem = Main.formatter.printProductSelection(40, productOptions, productChoices, TextFormatter.PaddingAlignment.LLC);
+               
+               if (currentItem.Name.equals("Exit")) {
+                    Main.formatter.printMulti(28, Main.formatter.createBox(1, 1, List.of("Are you sure?"), TextFormatter.BorderStyle.ROUNDED), TextFormatter.PaddingAlignment.CENTER);
+                    purchasing = Main.formatter.printSelectionInBox(31, List.of("No", "Yes"), List.of("no", "yes"), TextFormatter.PaddingAlignment.CENTER, TextFormatter.BorderStyle.ROUNDED).equals("no");
+               } else if (currentItem.Price<Globals.money) {
+                    cart.add(currentItem);
+                    Globals.money -= currentItem.Price;
+                    Main.formatter.alert(30, List.of(currentItem.Name+" purchased."));
+               } else {
+                    Main.formatter.alert(30, List.of("You don't have enough money to buy "+currentItem.Name));
+               }
+
+          }
+          return cart;
+     }
+
      public static List<GameClasses.Entity> generateEncounter(List<GameClasses.Entity> enemyPool, int num) {
           List<GameClasses.Entity> product = new ArrayList<>();
           for (int i = 0; i < num; i++) {
@@ -69,7 +115,7 @@ public class Campaign {
           return product;
      }
 
-     public static void playCampaign(List<GameClasses.Entity> enemyPool, List<GameClasses.Entity> nemesisEntity, int requiredProgress, int progression) throws IOException, InterruptedException {
+     public static void playCampaign(List<GameClasses.Entity> enemyPool, List<GameClasses.Entity> nemesisEntity, int requiredProgress, int progression, int wage) throws IOException, InterruptedException {
           if (Globals.progress<requiredProgress) {
                Main.screen.clear();
                Main.screen.refresh();
@@ -101,6 +147,15 @@ public class Campaign {
                User.Gear.add(Weapons.geopolitanMace);
                User.Gear.add(Weapons.geopolitanWeaver);
           }
+
+          List<GameClasses.Product> perks = shop();
+          Main.screen.clear();
+          Main.screen.refresh();
+          for (Product perk : perks) {
+               Main.formatter.printSingle(10, "PURCHASED ITEMS:", TextFormatter.PaddingAlignment.CENTER);
+               perk.use(User);
+          }
+          perkRow = 20;
           
           int money = 0;
           int localNemesisPercentage = 0;
@@ -125,11 +180,11 @@ public class Campaign {
                if (User.Alive) {
                     Main.screen.clear();
                     Main.screen.refresh();
-                    money += enemyNum*35;
+                    money += enemyNum*wage;
                     localNemesisPercentage += enemyNum*2;
                     Globals.nemesisPercentage += GameClasses.randInt(0, 1);
                     Main.formatter.printMulti(20, Main.formatter.createBox(1, 1, List.of(
-                         enemyNum+" x "+"35 = $"+enemyNum*35+" earned.",
+                         enemyNum+" x "+wage+" = $"+enemyNum*wage+" earned.",
                          "Chance of encountering the leader: "+localNemesisPercentage,
                          "Chance of encountering Nemesis: "+Globals.nemesisPercentage,
                          "",

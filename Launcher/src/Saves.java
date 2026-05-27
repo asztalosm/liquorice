@@ -29,7 +29,7 @@ public class Saves {
         public void setName(String name) {this.name = name;}
         public void setNemesisPercentage(int nemesisPercentage) {this.nemesisPercentage = nemesisPercentage;}
         public void setMoney(int money) {this.money = money;}
-        public void setProgress(int nemesisPercentage) {this.nemesisPercentage = nemesisPercentage;}
+        public void setProgress(int progress) {this.progress = progress;}
     }
 
     public static void loadSave(File saveFile) throws IOException, InterruptedException {
@@ -47,6 +47,8 @@ public class Saves {
         System.out.println("saveSave file: " + saveFile.getAbsoluteFile());
         System.out.println("saveSave file exists:" + saveFile.exists());
         SaveData save = new SaveData();
+        Main.screen.clear();
+        Main.screen.refresh();
         Main.formatter.alert(20, List.of("Save file of "+name+" updated."));
         save.setScene("Campaign selector");
         save.setName(name);
