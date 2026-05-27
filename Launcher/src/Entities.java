@@ -143,5 +143,21 @@ public class Entities {
     //endregion
     
     //region FINAL
-    // public static GameClasses.Entity nemesis = new GameClasses.Entity("Nemesis", 10, 20, 2, 3, "ascii-art/nemesis.txt", List.of(Weapons.geopolitanGauntlet), new String[] {""});
+    public static GameClasses.Entity nemesis = new GameClasses.Entity("Nemesis", 10, 20, 2, 3, "ascii-art/nemesis.txt", List.of(Weapons.nemesis), List.of(
+        new GameClasses.StatusEffect(Effects.ammo, 3, true)
+    ), new String[] {
+        "Ever wondered as to why our entire society revolves around the production of a plant that is used for making candy? Now I see why, with my own eyes. To appease THEM.",
+        "5000 years ago, forever marching demons of metal and silk came, saw and conquered from beyond the fog. They enslaved us and dragged us to wherever they pleased.",
+        "The anicent evil would not let us live a life worthy of a human one. Even though we are forced to care about these sugary plants more than our own in our current time,",
+        "this eternal live of servitude is still nothing compared to how they would treat us. Of course, they would leave, as the most brilliant of our brewers had found a strange",
+        "biochemical interaction between this plant and the demons. Liquorice puts them into slumber and pacifies them completely. As such, we slowly reclaimed our world with",
+        "nothing but a heap of black candy. Now, the anicent evil wakes agin to come and enslave us. Our tributes are no linger plentiful enough for them, and as such they came",
+        "to bring ruin onto us once more.",
+        "",
+        "Every child learns how they loomk like from a young age. A face of many holes crowning a body of steel and silk which is as light as a feather and as quick as a viper.",
+        "The tales did not lie. The nemesis are made for predation. They emit no sound upon moving which makes them even the more deadlier. Their many arms can wield many weapons,",
+        "most notably polearms and pole mounted firearms of considerable size. They move gracefully, using their momentum to move rather than pure muscle strength.",
+        "As intimidatina as they are, however, they did not prepare for the brilliance of the human mind. We let ourselves be beaten and enslaved, yes, but that was thousands",
+        "of years ago. We will not let them conquer us once more.",
+    });
 }

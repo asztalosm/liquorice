@@ -16,13 +16,13 @@ public class Effects {
     public static GameClasses.StatusEffect ammo = new GameClasses.StatusEffect("Ammo", (entity) -> {}); // charge mechanic
     public static GameClasses.StatusEffect badge = new GameClasses.StatusEffect("Taskmaster badge", (entity) -> {
         try {
-            Main.formatter.alert(Combat.getInitiativeRow()-10, List.
-            
-            of(
-                "The badge of "+entity.Name+" starts evaporating as you execute them.",
-                "From the thick cloud of ashes, a humanoid form emerges."
-            ));
-            entity.copyFrom(Entities.juggernaut);
+            if (entity.Health<=0) {               
+                Main.formatter.alert(Combat.getInitiativeRow()-10, List.of(
+                    "The badge of "+entity.Name+" starts evaporating as you execute them.",
+                    "From the thick cloud of ashes, a humanoid form emerges."
+                ));
+                entity.copyFrom(Entities.juggernaut);
+            }
         } catch (IOException | InterruptedException e) {}
     }); // unique
 }

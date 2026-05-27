@@ -77,13 +77,30 @@ public class Campaign {
                SceneController.loadScene("Campaign selector");
           }
           
-          GameClasses.Entity User = new GameClasses.Entity(Main.characterName, 5, 10, 1, 2, "ascii-art/jane.txt", List.of(
+          GameClasses.Entity User = new GameClasses.Entity(Main.characterName, 5, 10, 1, 2, "ascii-art/jane.txt", new ArrayList<>(List.of(
                Weapons.TacticalAxe,
                Weapons.Fists,
                Weapons.pistol
-          ), List.of(
+          )), List.of(
                new GameClasses.StatusEffect(Effects.ammo, 3, true)
           ), null);
+
+          if (Globals.progress>0) {
+               User.MaxHealth += 5;
+               User.Health += 5;
+               User.Gear.add(Weapons.ritualDagger);
+          }
+          if (Globals.progress>1) {
+               User.Endurance += 2;
+               User.Speed += 2;
+               User.BlockMod += 4;
+          }
+          if (Globals.progress>2) {
+               User.MaxStamina += 5;
+               User.Stamina += 5;
+               User.Gear.add(Weapons.geopolitanMace);
+               User.Gear.add(Weapons.geopolitanWeaver);
+          }
           
           int money = 0;
           int localNemesisPercentage = 0;
@@ -93,6 +110,12 @@ public class Campaign {
                int enemyNum = GameClasses.randInt(1, 2);
                if (GameClasses.randInt(0, 100)>localNemesisPercentage) {
                     Combat.battle(User, generateEncounter(enemyPool, enemyNum));
+               } else if (GameClasses.randInt(0, 100)>localNemesisPercentage) {
+                    Combat.battle(User, List.of(Entities.nemesis));
+                    if (User.Alive) {
+                         hasDefeatedNemesis = true;
+                         Globals.nemesisPercentage = 0;
+                    }
                } else {
                     Combat.battle(User, nemesisEntity);
                     if (User.Alive) {
@@ -112,7 +135,7 @@ public class Campaign {
                          "",
                          "Do you wish to continue?"
                     ), TextFormatter.BorderStyle.SINGLE), TextFormatter.PaddingAlignment.CENTER);
-                    switch (Main.formatter.printSelectionInBox(30, List.of("Yes", "No"), List.of("y", "n"), TextFormatter.PaddingAlignment.CENTER, TextFormatter.BorderStyle.ROUNDED)) {
+                    switch (Main.formatter.printSelectionInBox(31, List.of("Yes", "No"), List.of("y", "n"), TextFormatter.PaddingAlignment.CENTER, TextFormatter.BorderStyle.ROUNDED)) {
                          case "y" -> {
                               Main.formatter.printMulti(30, Main.formatter.createBox(30, 50, List.of(""), TextFormatter.BorderStyle.NOTHING), TextFormatter.PaddingAlignment.CENTER);
                               Main.formatter.alert(30, List.of("Good job, here comes the next bunch."));

@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.PriorityQueue;
 
@@ -137,7 +138,7 @@ public class Combat {
 
             @Override
             public String chooseAction(Entity currEntity) throws IOException, InterruptedException {
-                List<String> options = List.of("Exit", "Block [2~4]", "Respire [2]");
+                List<String> options = List.of("Exit", "Block ["+(2+currEntity.BlockMod)+"~"+(4+currEntity.BlockMod)+"]", "Respire [2]");
                 List<String> returnOptions = List.of("exit", "block", "respire");
                 String choice;
 
@@ -172,9 +173,9 @@ public class Combat {
                 for (Entity entity : tempEnemies) {
                     System.out.println(entity.Effects);
                     if (entity.Health<=0) {
-                        if (entity.getEffect("Taskmaster badge").count>0) {
-                            entity.getEffect("Taskmaster badge").affect(entity);
-                        } else {
+                        if (entity.getEffect("Taskmaster badge").count<=0) {
+                        //     entity.getEffect("Taskmaster badge").affect(entity);
+                        // } else {
                             entity.Alive = false;
                             entity.SkinPath = "ascii-art/death.txt";
                             order.remove(entity);
@@ -335,7 +336,53 @@ public class Combat {
                         User.EquippedWeapon = combatHandler.chooseEquipment(User);
                     }
                     case "inspect" -> {
-                        Main.formatter.printSingle(getSubMenuRow(), "Kukucs", TextFormatter.PaddingAlignment.CENTER);
+                        combatHandler.visualise(current);
+                        boolean targetting = true;
+                        Entity target = tempEnemies.get(0);
+                        while (targetting) {
+                            Main.formatter.printSingle(getSubMenuRow(), "Press backspace to cancel", TextFormatter.PaddingAlignment.CENTER);
+                            combatHandler.printParticipants(target, true);
+                            KeyStroke key = Main.screen.readInput();
+                            if (key == null) continue;
+                            switch (key.getKeyType()) {
+                                case ArrowRight -> {
+                                    if (tempEnemies.indexOf(target)<tempEnemies.size()-1) {target = tempEnemies.get(tempEnemies.indexOf(target)+1);}
+                                }
+                                case ArrowLeft -> {
+                                    if (tempEnemies.indexOf(target)>0) {target = tempEnemies.get(tempEnemies.indexOf(target)-1);}
+                                }
+                                case Enter -> {
+                                    List<String> enemyInfoHeader = Main.formatter.createBox(1, 1, Main.formatter.connectAsciiArt(List.of(Main.formatter.loadArt("ascii-art/article.txt"), target.getSkin())), TextFormatter.BorderStyle.NOTHING);
+                                    enemyInfoHeader.addAll(List.of(
+                                        "-".repeat(Main.formatter.getLongestElementLength(Arrays.asList(target.Description)).length()),
+                                        ""
+                                    ));
+                                    enemyInfoHeader.addAll(Arrays.asList(target.Description));
+                                    enemyInfoHeader.addAll(List.of(
+                                        "",
+                                        "Endurance: "+target.Endurance,
+                                        "Speed: "+target.Speed,
+                                        "Equipped: "+target.EquippedWeapon.Name,
+                                        "Planning: "+target.PlannedAttack.Name+" ["+target.PlannedAttack.DamageRange[0]+"~"+target.PlannedAttack.DamageRange[1]+"] ",
+                                        "",
+                                        "Effects:"
+                                    ));
+                                    enemyInfoHeader.addAll(target.getEffectDisplay());
+                                    List<String> enemyInfo = Main.formatter.createBox(50, 1, enemyInfoHeader, TextFormatter.BorderStyle.DOUBLE);
+                                    Main.screen.clear();
+                                    Main.screen.refresh();
+                                    Main.formatter.printMulti(startRow, enemyInfo, TextFormatter.PaddingAlignment.CENTER);
+                                    Main.formatter.promptTextInput(startRow+enemyInfo.size()+2, TextFormatter.PaddingAlignment.CENTER, "Interesting [ENTER]");
+                                    targetting = false;
+                                }
+                                case Backspace -> {
+                                    combatHandler.clearAlertPanel();
+                                    targetting = false;
+                                }
+                            }
+                            combatHandler.visualise(current);
+                            Main.screen.refresh();
+                        }
                     }
                 }
                 combatHandler.printParticipants(current, false);
@@ -348,6 +395,8 @@ public class Combat {
             Main.formatter.promptTextInput(getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, "Next [ENTER]");
 
             for (int i = 0; i < current.Effects.size(); i++) {
+                current.Effects.get(i).affect(current);
+                if (i < current.Effects.size()) {break;}
                 // System.out.println(e.Effects.get(i));
                 if (!current.Effects.get(i).infinite) {current.Effects.get(i).duration -= 1;}
                 // System.out.println(e.Effects.get(i));

@@ -38,7 +38,6 @@ public class Weapons {
                         target.damageSelf(7);
                         attacker.getEffect("Ammo").count--;
                         Main.formatter.printSingle(Combat.getSubMenuRow(), "*BOOM*", TextFormatter.PaddingAlignment.CENTER);
-                        Main.formatter.promptTextInput(Combat.getSubMenuRow()+1, TextFormatter.PaddingAlignment.CENTER, target.Name+" suffered 6 damage."+" [ENTER]");
                     } else {
                         Main.formatter.promptTextInput(Combat.getSubMenuRow()+1, TextFormatter.PaddingAlignment.CENTER, attacker.Name+" lacks ammunition."+" [ENTER]");
                     }
@@ -209,8 +208,8 @@ public class Weapons {
             "Charge",
             (attacker, target) -> {
                 try {
-                    Main.formatter.promptTextInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, target.applyEffect(Effects.weakness, 2, 2, false)+" [ENTER]");
-                    Main.formatter.promptTextInput(Combat.getSubMenuRow()+1, TextFormatter.PaddingAlignment.CENTER, target.applyEffect(Effects.slowness, 2, 2, false)+" [ENTER]");
+                    Main.formatter.promptTextInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.haste, 2, 2, false)+" [ENTER]");
+                    Main.formatter.promptTextInput(Combat.getSubMenuRow()+1, TextFormatter.PaddingAlignment.CENTER, target.applyEffect(Effects.weakness, 2, 2, false)+" [ENTER]");
                 } catch (IOException | InterruptedException e2) {}
             },
             false,
@@ -278,6 +277,58 @@ public class Weapons {
             0,
             1)
     );
+
+    public static GameClasses.Equipment nemesis = new GameClasses.Equipment(
+        "Nemesis frame",
+        new GameClasses.Attack(
+            "Multi-cleave",
+            (attacker, target) -> {},
+            false,
+            new int[]{2, 3},
+            3,
+            5),
+        new GameClasses.Attack(
+            "Concentrated fire",
+            (attacker, target) -> {
+                try {
+                    if (attacker.getEffect("Ammo").count>1) {
+                        target.damageSelf(8);
+                        attacker.getEffect("Ammo").count -= 2;
+                        Main.formatter.printSingle(Combat.getSubMenuRow(), "*BOOM*", TextFormatter.PaddingAlignment.CENTER);
+                    } else {
+                        Main.formatter.promptTextInput(Combat.getSubMenuRow()+1, TextFormatter.PaddingAlignment.CENTER, attacker.Name+" lacks ammunition."+" [ENTER]");
+                    }
+                } catch (IOException | InterruptedException e2) {}
+            },
+            false,
+            new int[]{0, 0},
+            1,
+            3),
+        new GameClasses.Attack(
+            "Repair",
+            (attacker, target) -> {
+                try {
+                    attacker.Stamina = attacker.MaxStamina;
+                    Main.formatter.promptTextInput(Combat.getSubMenuRow()+1, TextFormatter.PaddingAlignment.CENTER, attacker.Name+" replenished all stamina."+" [ENTER]");
+                    Main.formatter.promptTextInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.ammo, 5, 1, true)+" [ENTER]");
+                } catch (IOException | InterruptedException e3) {}
+            },
+            false,
+            new int[]{0, 0},
+            0,
+            10),
+        new GameClasses.Attack(
+            "Accellerate",
+            (attacker, target) -> {
+                try {
+                    Main.formatter.promptTextInput(Combat.getSubMenuRow(), TextFormatter.PaddingAlignment.CENTER, attacker.applyEffect(Effects.haste, attacker.getEffect("Hatse").count+2, 1, true)+" [ENTER]");
+                } catch (IOException | InterruptedException e3) {}
+            },
+            false,
+            new int[]{6, 8},
+            0,
+            5)
+    );
     
     //region PLAYER WEAPONS
 
@@ -316,7 +367,7 @@ public class Weapons {
             "Cleave",
             (attacker, target) -> {},
             false,
-            new int[]{200, 600},
+            new int[]{3, 6},
             1,
             3),
         new GameClasses.Attack(
@@ -342,7 +393,6 @@ public class Weapons {
                         target.damageSelf(7);
                         attacker.getEffect("Ammo").count--;
                         Main.formatter.printSingle(Combat.getSubMenuRow(), "*BOOM*", TextFormatter.PaddingAlignment.CENTER);
-                        Main.formatter.promptTextInput(Combat.getSubMenuRow()+1, TextFormatter.PaddingAlignment.CENTER, target.Name+" suffered 6 damage."+" [ENTER]");
                     } else {
                         Main.formatter.promptTextInput(Combat.getSubMenuRow()+1, TextFormatter.PaddingAlignment.CENTER, attacker.Name+" lacks ammunition."+" [ENTER]");
                     }

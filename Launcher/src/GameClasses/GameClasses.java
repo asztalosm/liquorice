@@ -157,6 +157,7 @@ public class GameClasses {
         public int Clock; // turn count
         private double NextActionTime;
         public String[] Description;
+        public int BlockMod;
 
         public Entity(String name, int maxHealth, int maxStamina, int endurance, int speed, String skinPath, List<Equipment> gear, List<StatusEffect> starterEffects, String[] description) {
             this.MaxHealth = maxHealth;
@@ -176,6 +177,7 @@ public class GameClasses {
             this.Clock = 0;
             this.Alive = true;
             this.NextActionTime = 0d;
+            this.BlockMod = 0;
             this.id = UnitIdGenerator.generateId();
         }
 
@@ -200,6 +202,7 @@ public class GameClasses {
             this.Alive = other.Alive;
             this.NextActionTime = other.NextActionTime;
             this.id = other.id;
+            this.BlockMod = 0;
             this.PlannedAttack = other.PlannedAttack;
             // this.id = UnitIdGenerator.generateId();
         }
@@ -221,6 +224,7 @@ public class GameClasses {
             this.Alive = other.Alive;
             this.NextActionTime = other.NextActionTime;
             this.id = other.id;
+            this.BlockMod = other.BlockMod;
             this.PlannedAttack = other.PlannedAttack;
             // this.id = UnitIdGenerator.generateId();
         }
@@ -234,7 +238,7 @@ public class GameClasses {
         }
 
         public int rollBlockDie() {
-            return randInt(2, 6);
+            return randInt(2, 6)+BlockMod;
         }
 
         public Attack plan() {
