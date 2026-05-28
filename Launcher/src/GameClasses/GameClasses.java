@@ -2,6 +2,8 @@ package GameClasses;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -191,7 +193,7 @@ public class GameClasses {
             this.Description = description;
             this.Clock = 0;
             this.Alive = true;
-            this.NextActionTime = 0d;
+            this.NextActionTime = 0;
             this.BlockMod = 0;
             this.id = UnitIdGenerator.generateId();
         }
@@ -244,6 +246,10 @@ public class GameClasses {
 
         public double getNextActionTime() {
             return this.NextActionTime;
+        }
+        
+        public void setNextActionTime(double d) {
+            this.NextActionTime = d;
         }
 
         public int getID() {
@@ -335,7 +341,7 @@ public class GameClasses {
 
         public List<String> getSkin() {
             List<String> product = new ArrayList<>();
-            try (BufferedReader br = new BufferedReader(new FileReader(this.SkinPath))) {
+            try (BufferedReader br = getResourceBufferedReader(this.SkinPath)) {
                 String line;
                 while ((line = br.readLine()) != null) {
                     product.add(line);
@@ -344,6 +350,14 @@ public class GameClasses {
                 System.out.println("Error reading file: " + this.SkinPath);
             }
             return product;
+        }
+
+        private BufferedReader getResourceBufferedReader(String path) throws IOException {
+            InputStream resourceStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
+            if (resourceStream != null) {
+                return new BufferedReader(new InputStreamReader(resourceStream));
+            }
+            return new BufferedReader(new FileReader(path));
         }
     }
 }
