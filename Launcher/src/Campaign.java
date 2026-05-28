@@ -216,7 +216,7 @@ public class Campaign {
                          "",
                          "Money earned: "+money
                     ));
-                    Globals.money = money;
+                    Globals.money += money;
                     Globals.progress = Math.max(progression, Globals.progress);
                     SceneController.loadScene("Campaign selector");
                } else {
@@ -225,7 +225,7 @@ public class Campaign {
                          "",
                          "Money earned: "+money
                     ));
-                    Globals.money = money;
+                    Globals.money += money;
                     SceneController.loadScene("Campaign selector");
                }
           }
