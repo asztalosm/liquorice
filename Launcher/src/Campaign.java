@@ -88,6 +88,7 @@ public class Campaign {
                Main.screen.refresh();
                Main.formatter.printMulti(0, Main.formatter.loadArt("ascii-art/shop.txt"), TextFormatter.PaddingAlignment.LLC);
                Main.formatter.printMulti(5, Main.formatter.loadArt("ascii-art/shopkeeper.txt"), TextFormatter.PaddingAlignment.RRC);
+               Main.formatter.printSingle(32, "-".repeat(Main.formatter.getCols()), TextFormatter.PaddingAlignment.CENTER);
                Main.formatter.printMulti(15, Main.formatter.createBox(1, 1, List.of("Money: $"+Globals.money), TextFormatter.BorderStyle.DOUBLE), TextFormatter.PaddingAlignment.LLC);
                Main.formatter.printMulti(39, Main.formatter.createBox(1, 1, productDescs, TextFormatter.BorderStyle.NOTHING), TextFormatter.PaddingAlignment.RRC);
                currentItem = Main.formatter.printProductSelection(40, productOptions, productChoices, TextFormatter.PaddingAlignment.LLC);
