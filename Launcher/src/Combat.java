@@ -43,6 +43,10 @@ public class Combat {
 
     public static void battle(Entity User, List<Entity> Enemies) throws IOException, InterruptedException {
         Main.scene = "Combat";
+        for (Entity enemy : Enemies) {
+            enemy.setNextActionTime(0);
+        }
+        User.setNextActionTime(0);
         User.Stamina = User.MaxStamina;
         List<Entity> tempEnemies = new ArrayList<>(Enemies);
         Saves.saveSave(Saves.currentFile, "eastern farms", Main.characterName, Globals.nemesisPercentage, Globals.money, Globals.progress);
@@ -169,8 +173,10 @@ public class Combat {
                 Main.screen.clear();
                 Main.screen.refresh();
 
+                System.out.println("---");
+                System.out.println("User: "+User.getNextActionTime());
                 for (Entity entity : tempEnemies) {
-                    System.out.println(entity.Effects);
+                    System.out.println(entity.Name+": "+entity.getNextActionTime());
                     if (entity.Health<=0) {
                         if (entity.getEffect("Taskmaster badge").count<=0) {
                         //     entity.getEffect("Taskmaster badge").affect(entity);
@@ -188,8 +194,7 @@ public class Combat {
                     enemySkins.add(entity.getSkin());
                 }
                 int enemySpace = TextFormatter.getGreaterList(enemySkins).size()+10;
-                System.out.println(enemySpace);
-                System.out.println(startRow);
+
                 if (enemySpace+startRow>24) {
                     enemyRowMod = enemySpace;
                 } else {
